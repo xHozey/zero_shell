@@ -14,15 +14,17 @@ pub fn cat(file: String) {
             println!("{}", buffer.trim())
         }
     } else {
-        match read(file) {
-            Ok(content) => {
-                match String::from_utf8(content) {
-                    Ok(v) => println!("{}", v),
-                    Err(err) => println!("{}", err.to_string())
+        for s in file.split_whitespace() {
+            match read(s) {
+                Ok(content) => {
+                    match String::from_utf8(content) {
+                        Ok(v) => print!("{}", v),
+                        Err(err) => print!("{}", err.to_string())
+                    }
+                },
+                Err(err) => {
+                    println!("{:?}", err.to_string())
                 }
-            },
-            Err(err) => {
-                println!("{:?}", err.to_string())
             }
         }
     }

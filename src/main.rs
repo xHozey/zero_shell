@@ -28,7 +28,7 @@ fn main() {
 
                 }
                 "cp" => {
-
+                    cp(str);
                 }
                 "mkdir" => {
                     mkdir(str);

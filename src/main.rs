@@ -4,7 +4,7 @@ mod commands;
 use commands::*;
 
 fn main() {
-    loop {
+    'outer: loop {
         print!("$ ");
         stdout().flush().unwrap();
         let mut buffer = String::new();
@@ -32,6 +32,9 @@ fn main() {
                 }
                 "mkdir" => {
                     mkdir(str);
+                }
+                "exit" => {
+                    break 'outer;
                 }
                 _ => {
                     println!("command not found!")

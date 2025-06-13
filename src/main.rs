@@ -5,13 +5,12 @@ use commands::*;
 
 fn main() {
     'outer: loop {
-        print!("$ ");
+        format_prompt();
         stdout().flush().unwrap();
         let mut buffer = String::new();
         match stdin().read_line(&mut buffer) {
             Ok(0) => {
-                println!("");
-                continue;
+                break 'outer
             },
             Ok(_) => {},
             Err(err) => println!("{}", err.to_string())
@@ -50,7 +49,7 @@ fn main() {
                     break 'outer;
                 }
                 _ => {
-                    println!("command not found!")
+                    println!("Command '{}' not found", cmd)
                 }
 
             }

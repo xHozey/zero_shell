@@ -1,4 +1,4 @@
-
+use std::env;
 
 pub fn parse_command(s: &str) -> Vec<(String, String)> {
     let mut res: Vec<(String, String)> = Vec::new();
@@ -14,4 +14,16 @@ pub fn parse_command(s: &str) -> Vec<(String, String)> {
         }
     }
     res
+}
+
+pub fn format_prompt() {
+    match env::current_dir() {
+        Ok(path) => {
+           match path.file_name() {
+            Some(name) => print!("{} $ ", name.to_str().unwrap()),
+            None => print!("{} $ ", path.display())
+           }
+        },
+        Err(err) => println!("{:?}", err.to_string())
+    }
 }

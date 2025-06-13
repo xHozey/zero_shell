@@ -1,1 +1,1 @@
-pub fn rm() {}
+pub fn rm(arg: String) {}

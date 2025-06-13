@@ -32,7 +32,7 @@ fn main() {
                     cd(str);
                 }
                 "ls" => {
-
+                    ls(str);
                 }
                 "cp" => {
                     cp(str);
@@ -42,6 +42,9 @@ fn main() {
                 }
                 "mv" => {
                     mv(str);
+                }
+                "rm" => {
+                    rm(str);
                 }
                 "exit" => {
                     break 'outer;

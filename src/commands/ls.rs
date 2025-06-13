@@ -1,1 +1,1 @@
-pub fn ls() {}
+pub fn ls(arg: String) {}

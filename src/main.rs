@@ -14,12 +14,24 @@ fn main() {
             match cmd.as_str() {
                 "pwd" => {
                     pwd();
-                },
+                }
                 "echo" => {
                     echo(str);
-                },
+                }
                 "cat" => {
                     cat(str);
+                }
+                "cd" => {
+                    cd(str);
+                }
+                "ls" => {
+
+                }
+                "cp" => {
+
+                }
+                "mkdir" => {
+                    mkdir(str);
                 }
                 _ => {
                     println!("command not found!")

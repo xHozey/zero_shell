@@ -12,10 +12,17 @@ pub fn cp(arg: String) {
         return
     }
     if spt.len() == 2 {
-        let dis = Path::new(spt[1]).join(Path::new(spt[0]));
-        match copy(spt[0], dis) {
-            Ok(_) => {} 
-            Err(err) => println!("{}", err.to_string())
+        let dis = Path::new(spt[1]);
+        if dis.is_dir() {
+            match copy(spt[0], dis.join(Path::new(spt[0]))) {
+                Ok(_) => {} 
+                Err(err) => println!("{}", err.to_string())
+            }
+        } else {
+            match copy(spt[0], dis) {
+                Ok(_) => {} 
+                Err(err) => println!("{}", err.to_string())
+            }
         }
     } else {
         let dis = Path::new(spt[spt.len()-1]);

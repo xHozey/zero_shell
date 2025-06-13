@@ -40,6 +40,9 @@ fn main() {
                 "mkdir" => {
                     mkdir(str);
                 }
+                "mv" => {
+                    mv(str);
+                }
                 "exit" => {
                     break 'outer;
                 }

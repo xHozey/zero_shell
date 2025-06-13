@@ -8,7 +8,7 @@ pub fn cat(file: String) {
             }
         },
         Err(err) => {
-            println!("{:?}", err)
+            println!("{:?}", err.to_string())
         }
     }
 }

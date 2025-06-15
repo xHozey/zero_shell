@@ -24,6 +24,6 @@ pub fn format_prompt() {
             None => print!("{} $ ", path.display())
            }
         },
-        Err(err) => eprintln!("{:?}", err.to_string())
+        Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase())
     }
 }

@@ -7,7 +7,7 @@ fn main() {
     'outer: loop {
         format_prompt();
         if let Err(err) = stdout().flush() {
-            eprintln!("{}", err)
+            eprintln!("{}", err.to_string().to_ascii_lowercase())
         }
         let mut buffer = String::new();
         match stdin().read_line(&mut buffer) {
@@ -15,7 +15,7 @@ fn main() {
                 break 'outer
             },
             Ok(_) => {},
-            Err(err) => eprintln!("{}", err.to_string())
+            Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase())
         }
         let commands = parse_command(buffer.trim());
         for (cmd, str) in commands {
@@ -51,7 +51,7 @@ fn main() {
                     break 'outer;
                 }
                 _ => {
-                    eprintln!("Command '{}' not found", cmd)
+                    eprintln!("command '{}' not found", cmd)
                 }
 
             }

@@ -9,7 +9,7 @@ pub fn cat(file: String) {
                     break;
                 },
                 Ok(_) => {},
-                Err(err) => eprintln!("{}", err.to_string())
+                Err(err) => eprintln!("cat: {}", err.to_string().to_ascii_lowercase())
             }
             println!("{}", buffer.trim())
         }
@@ -19,11 +19,11 @@ pub fn cat(file: String) {
                 Ok(content) => {
                     match String::from_utf8(content) {
                         Ok(v) => print!("{}", v),
-                        Err(err) => eprint!("{}", err.to_string())
+                        Err(err) => eprint!("cat: {}", err.to_string().to_ascii_lowercase())
                     }
                 },
                 Err(err) => {
-                    eprintln!("{:?}", err.to_string())
+                    eprintln!("cat: {}", err.to_string().to_ascii_lowercase())
                 }
             }
         }

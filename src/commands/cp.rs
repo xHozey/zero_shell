@@ -8,18 +8,18 @@ pub fn cp(arg: String) {
         return
     }
     if spt.len() == 1 {
-        eprintln!("missing destination file operand after '{}'", spt[0]);
+        eprintln!("cp: missing destination file operand after '{}'", spt[0]);
         return
     }
     if spt.len() == 2 {
         let dis = Path::new(spt[1]);
         if dis.is_dir() {
             if let Err(err) = copy(spt[0], dis.join(Path::new(spt[0]))) {
-                eprintln!("{}", err.to_string())
+                eprintln!("cp: {}", err.to_string().to_ascii_lowercase())
             }
         } else {
             if let Err(err) = copy(spt[0], dis) {
-                eprintln!("{}", err.to_string())
+                eprintln!("cp: {}", err.to_string().to_ascii_lowercase())
             }
         }
     } else {
@@ -37,7 +37,7 @@ pub fn cp(arg: String) {
         for i in 0..spt.len()-1 {
             let p = Path::new(spt[i]);
             if let Err(err) = copy(p, dis.join(Path::new(p))) {
-             eprintln!("{}", err.to_string())
+             eprintln!("cp: {}", err.to_string().to_ascii_lowercase())
         }
                 
         }

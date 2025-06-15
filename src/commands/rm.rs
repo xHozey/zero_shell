@@ -15,11 +15,11 @@ pub fn rm(s: String) {
             if flag {
                 if f.is_dir() {
                     if let Err(err) = fs::remove_dir_all(f) {
-                        eprintln!("{}", err.to_string())
+                        eprintln!("rm: {}", err.to_string().to_ascii_lowercase())
                     }
                 } else {
                     if let Err(err) = fs::remove_file(f) {
-                        eprintln!("{}", err.to_string());
+                        eprintln!("rm: {}", err.to_string().to_ascii_lowercase());
                     }
                 }
             } else {
@@ -27,7 +27,7 @@ pub fn rm(s: String) {
                     eprintln!("rm: cannot remove '{}': Is a directory", file)
                 } else {
                     if let Err(err) = fs::remove_file(f) {
-                        eprintln!("{}", err.to_string());
+                        eprintln!("rm: {}", err.to_string().to_ascii_lowercase());
                     }
                 }
             }

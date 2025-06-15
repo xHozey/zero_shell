@@ -11,11 +11,9 @@ fn main() {
         }
         let mut buffer = String::new();
         match stdin().read_line(&mut buffer) {
-            Ok(0) => {
-                break 'outer
-            },
-            Ok(_) => {},
-            Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase())
+            Ok(0) => break 'outer,
+            Ok(_) => {}
+            Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase()),
         }
         let commands = parse_command(buffer.trim());
         for (cmd, args) in commands {
@@ -53,7 +51,6 @@ fn main() {
                 _ => {
                     eprintln!("command '{}' not found", cmd)
                 }
-
             }
         }
     }

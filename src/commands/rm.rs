@@ -5,7 +5,7 @@ pub fn rm(s: String) {
     let args: Vec<&str> = s.split_whitespace().collect();
     if args.contains(&"-r") {
         flag = true
-    } 
+    }
     for file in args {
         if file == "-r" {
             continue;

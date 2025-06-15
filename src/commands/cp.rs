@@ -1,8 +1,8 @@
 use std::path::Path;
 use std::fs::{copy};
 
-pub fn cp(arg: String) {
-    let spt: Vec<&str> = arg.split_whitespace().collect();
+pub fn cp(s: String) {
+    let spt: Vec<&str> = s.split_whitespace().collect();
     if spt.len() == 0 {
         eprintln!("cp: missing file operand");
         return

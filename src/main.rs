@@ -18,34 +18,34 @@ fn main() {
             Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase())
         }
         let commands = parse_command(buffer.trim());
-        for (cmd, str) in commands {
+        for (cmd, args) in commands {
             match cmd.as_str() {
                 "pwd" => {
                     pwd();
                 }
                 "echo" => {
-                    echo(str);
+                    echo(args);
                 }
                 "cat" => {
-                    cat(str);
+                    cat(args);
                 }
                 "cd" => {
-                    cd(str);
+                    cd(args);
                 }
                 "ls" => {
-                    ls(str);
+                    ls(args);
                 }
                 "cp" => {
-                    cp(str);
+                    cp(args);
                 }
                 "mkdir" => {
-                    mkdir(str);
+                    mkdir(args);
                 }
                 "mv" => {
-                    mv(str);
+                    mv(args);
                 }
                 "rm" => {
-                    rm(str);
+                    rm(args);
                 }
                 "exit" => {
                     break 'outer;

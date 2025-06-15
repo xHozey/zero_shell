@@ -1,7 +1,7 @@
 use std::fs::rename;
 use std::path::Path;
-pub fn mv(arg: String) {
-    let spt: Vec<&str> = arg.split_whitespace().collect();
+pub fn mv(s: String) {
+    let spt: Vec<&str> = s.split_whitespace().collect();
     if spt.len() == 0 {
         eprintln!("mv: missing file operand");
         return

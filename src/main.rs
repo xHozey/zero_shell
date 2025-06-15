@@ -6,14 +6,16 @@ use commands::*;
 fn main() {
     'outer: loop {
         format_prompt();
-        stdout().flush().unwrap();
+        if let Err(err) = stdout().flush() {
+            eprintln!("{}", err)
+        }
         let mut buffer = String::new();
         match stdin().read_line(&mut buffer) {
             Ok(0) => {
                 break 'outer
             },
             Ok(_) => {},
-            Err(err) => println!("{}", err.to_string())
+            Err(err) => eprintln!("{}", err.to_string())
         }
         let commands = parse_command(buffer.trim());
         for (cmd, str) in commands {
@@ -49,7 +51,7 @@ fn main() {
                     break 'outer;
                 }
                 _ => {
-                    println!("Command '{}' not found", cmd)
+                    eprintln!("Command '{}' not found", cmd)
                 }
 
             }

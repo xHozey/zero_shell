@@ -15,24 +15,24 @@ pub fn rm(s: String) {
             if flag {
                 if f.is_dir() {
                     if let Err(err) = fs::remove_dir_all(f) {
-                        println!("{}", err.to_string())
+                        eprintln!("{}", err.to_string())
                     }
                 } else {
                     if let Err(err) = fs::remove_file(f) {
-                        println!("{}", err.to_string());
+                        eprintln!("{}", err.to_string());
                     }
                 }
             } else {
                 if f.is_dir() {
-                    println!("rm: cannot remove '{}': Is a directory", file)
+                    eprintln!("rm: cannot remove '{}': Is a directory", file)
                 } else {
                     if let Err(err) = fs::remove_file(f) {
-                        println!("{}", err.to_string());
+                        eprintln!("{}", err.to_string());
                     }
                 }
             }
         } else {
-            println!("rm: cannot remove '{}': No such file or directory", file)
+            eprintln!("rm: cannot remove '{}': No such file or directory", file)
         }
     }
 }

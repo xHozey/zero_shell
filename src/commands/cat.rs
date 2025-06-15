@@ -9,7 +9,7 @@ pub fn cat(file: String) {
                     break;
                 },
                 Ok(_) => {},
-                Err(err) => println!("{}", err.to_string())
+                Err(err) => eprintln!("{}", err.to_string())
             }
             println!("{}", buffer.trim())
         }
@@ -19,11 +19,11 @@ pub fn cat(file: String) {
                 Ok(content) => {
                     match String::from_utf8(content) {
                         Ok(v) => print!("{}", v),
-                        Err(err) => print!("{}", err.to_string())
+                        Err(err) => eprint!("{}", err.to_string())
                     }
                 },
                 Err(err) => {
-                    println!("{:?}", err.to_string())
+                    eprintln!("{:?}", err.to_string())
                 }
             }
         }

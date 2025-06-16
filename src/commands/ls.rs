@@ -47,7 +47,11 @@ pub fn ls(s: String) {
                      });
                     let mut buffer = String::new();
                     if all {
-                        buffer.push_str(". .. ")
+                        if classify {
+                            buffer.push_str("./ ../ ")
+                        } else {
+                            buffer.push_str(". .. ")
+                        }
                     }
                     for entry in entries {
                         if let Ok(entry) = entry {
@@ -57,6 +61,14 @@ pub fn ls(s: String) {
                                 continue;
                             }
                             buffer.push_str(&file_name_str);
+                            if classify  {
+                                if let Ok(metadata) = entry.metadata() {
+                                    if metadata.is_dir() {
+                                        buffer.push('/')
+                                    } else if metadata.is_sy
+
+                                } 
+                            }
                             buffer.push(' ');
                         }
                     }

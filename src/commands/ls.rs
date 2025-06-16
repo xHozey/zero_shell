@@ -23,7 +23,8 @@ pub fn ls(s: String) {
     if paths.is_empty() {
         paths.push(Path::new("."))
     }
-    for path in paths {
+    let mut res = String::new();
+    for path in &paths {
         if !path.exists() {
             eprintln!(
                 "ls: cannot access '{}': No such file or directory",
@@ -33,9 +34,22 @@ pub fn ls(s: String) {
         }
         if path.is_dir() {
             match fs::read_dir(path) {
-                Ok(t) => {
+                Ok(entries) => {
+                   let mut entries: Vec<_> = entries.collect();
+                    entries.sort_by_key(|e| {
+                         e.as_ref()
+                        .map(|e| {
+                            let name = e.file_name().to_string_lossy().to_string();
+                            let sort_key = name.strip_prefix('.').unwrap_or(&name);
+                            sort_key.to_lowercase()  
+                        })
+                        .unwrap_or_default()
+                     });
                     let mut buffer = String::new();
-                    for entry in t {
+                    if all {
+                        buffer.push_str(". .. ")
+                    }
+                    for entry in entries {
                         if let Ok(entry) = entry {
                             let file_name = entry.file_name();
                             let file_name_str = file_name.to_string_lossy();
@@ -46,11 +60,17 @@ pub fn ls(s: String) {
                             buffer.push(' ');
                         }
                     }
-                    println!("{}", buffer.trim())
+                    if paths.len() > 1 {
+                        res.push_str(&format!("{}:\n", path.display()));
+                        res.push_str(&format!("{}\n\n", buffer.trim()));
+                    } else {
+                        res.push_str(buffer.trim());
+                    }
                 },
                 Err(err) => eprintln!("ls: {}", err.to_string().to_ascii_lowercase())
             }
         } else {
         }
     }
+    println!("{}", res.trim())
 }

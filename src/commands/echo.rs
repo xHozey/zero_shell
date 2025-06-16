@@ -1,1 +1,3 @@
-pub fn echo(s: String) {}
+pub fn echo(s: String) {
+    println!("{}", s)
+}

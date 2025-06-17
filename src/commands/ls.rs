@@ -1,14 +1,20 @@
+use regex::Regex;
 use std::{fs};
 use std::env;
 
 pub fn ls(s: String) {
-
-
     let args: Vec<&str> = s.split_whitespace().collect();
     if args.len() == 0 {
         ls_print(false);
     } else {
-        print!("{}", s);
+        let re = Regex::new(r"^(-[aFl]{1,3}(\s+|$)){1,3}$").unwrap();
+        if re.is_match(&s) {
+            for v in s.chars() {
+                if v == 'a' {
+                    ls_print(true);
+                }
+            }
+        }
     }
 }
 

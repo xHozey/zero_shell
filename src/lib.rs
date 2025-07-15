@@ -20,3 +20,7 @@ pub fn format_prompt() {
         Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase()),
     }
 }
+
+pub fn add_buffer_format() {
+    print!(">");
+}

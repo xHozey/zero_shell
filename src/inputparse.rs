@@ -105,3 +105,17 @@ pub fn parse_arg(str :String) -> Result<Vec<String>, String >{
     }
     Ok(result)
 }
+
+
+
+
+pub fn is_done(s: String) -> bool {
+    
+   let quote = s.matches('\'').count();
+   let dquote =  s.matches('\"').count();
+   let back_s =  s.matches('\\').count();
+   if (quote % 2 == 0 || quote == 0) && (dquote % 2 == 0 || dquote == 0) && (back_s % 2 == 0 || back_s == 0) {
+    return true;
+   }
+    false
+}

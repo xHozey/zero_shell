@@ -1,14 +1,14 @@
 use std::env;
 
-pub fn parse_command(s: &str) -> Vec<(String, String)> {
-    let mut res: Vec<(String, String)> = Vec::new();
-    for spt in s.split("&&") {
-        match spt.trim().split_once(' ') {
-            Some((cmd, str)) => res.push((cmd.to_string(), str.to_string())),
-            None => res.push((spt.to_string(), "".to_string())),
+pub fn parse_command(s: &str) -> (String, String) {
+    // let mut res: (String, String)> = Vec::new();
+    // for spt in s.split("&&") {
+        match s.trim().split_once(' ') {
+            Some((cmd, str)) => return (cmd.to_string(), str.to_string()),
+            None => return (s.to_string(), "".to_string()),
         }
-    }
-    res
+    // }
+    // res
 }
 
 pub fn format_prompt() {

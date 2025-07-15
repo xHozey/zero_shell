@@ -2,6 +2,8 @@ use std::io::*;
 use zero_shell::*;
 mod commands;
 use commands::*;
+mod inputparse;
+use inputparse::*;
 
 fn main() {
     'outer: loop {
@@ -16,42 +18,44 @@ fn main() {
             Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase()),
         }
         let commands = parse_command(buffer.trim());
-        for (cmd, args) in commands {
-            match cmd.as_str() {
-                "pwd" => {
-                    pwd();
-                }
-                "echo" => {
-                    echo(args);
-                }
-                "cat" => {
-                    cat(args);
-                }
-                "cd" => {
-                    cd(args);
-                }
-                "ls" => {
-                    ls(args);
-                }
-                "cp" => {
-                    cp(args);
-                }
-                "mkdir" => {
-                    mkdir(args);
-                }
-                "mv" => {
-                    mv(args);
-                }
-                "rm" => {
-                    rm(args);
-                }
-                "exit" => {
-                    break 'outer;
-                }
-                _ => {
-                    eprintln!("command '{}' not found", cmd)
-                }
-            }
-        }
+        let args = parse_arg(commands.1);
+        println!("{:?}",args);
+        // for (cmd, args) in commands {
+            // match commands.0.to_string() {
+            //     "pwd" => {
+            //         pwd();
+            //     }
+            //     "echo" => {
+            //         echo(args);
+            //     }
+            //     "cat" => {
+            //         // cat(args);
+            //     }
+            //     "cd" => {
+            //         // cd(args);
+            //     }
+            //     "ls" => {
+            //         // ls(args);
+            //     }
+            //     "cp" => {
+            //         // cp(args);
+            //     }
+            //     "mkdir" => {
+            //         // mkdir(args);
+            //     }
+            //     "mv" => {
+            //         // mv(args);
+            //     }
+            //     "rm" => {
+            //         // rm(args);
+            //     }
+            //     "exit" => {
+            //         break 'outer;
+            //     }
+            //     _ => {
+            //         eprintln!("command '{}' not found", commands.0)
+            //     }
+            // }
+        // }
     }
 }

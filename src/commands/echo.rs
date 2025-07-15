@@ -1,12 +1,6 @@
-use std::collections::HashMap;
-pub fn echo(s: String) {
+pub fn echo(_s: Vec<String>) {
 
-    println!("{:?}",parse_arg(s));
-
-
-
-
-
+    // println!("{:?}",parse_arg(s));
 
 
 
@@ -63,83 +57,3 @@ pub fn echo(s: String) {
 
 
 
-pub fn parse_arg(str :String) -> Vec<(String,bool)> {
-    let mut result = vec![];
-    let mut tmp = String::new();
-    let mut quote = HashMap::new();
-    for i in str.chars() {
-       match i {
-        '\'' => {
-            match quote.get(&'\'') {
-                Some(true) => {
-                    quote.insert('\'', false);
-                    result.push((tmp.to_string(),true));
-                    tmp = String::new();
-                },
-                Some(false) => { 
-                    if quote.get(&'\"') == Some(&true){
-                        tmp.push(i);
-                    }else {
-                        quote.insert(i, true);
-                    }
-                },
-                None =>{
-                    if quote.get(&'\"') == Some(&true) {
-                        tmp.push(i);
-                    }else {
-                        quote.insert('\'', true);
-                    }
-                }
-                };
-        },
-        '\"' => {
-            match quote.get(&'\"') {
-                Some(true) => {
-                    quote.insert('\"', false);
-                    result.push((tmp.to_string(),true));
-                    tmp = String::new();
-                },
-                Some(false) => { 
-                    if quote.get(&'\'') == Some(&true){
-                        tmp.push(i);
-                    }else {
-                        quote.insert(i, true);
-                    }
-                },
-                None =>{
-                    if quote.get(&'\'') == Some(&true) {
-                    tmp.push(i);
-                }else {
-                    quote.insert('\"', true);
-                }}
-                };
-        },
-        '\\' => {
-            match quote.get(&'\\') {
-                Some(true) => {
-                    tmp.push(i);
-                    if quote.get(&'\"') == Some(&false) && quote.get(&'\'') == Some(&false) {
-                        quote.insert('\\', false);
-                    }
-                },
-                Some(false) => { 
-                    if quote.get(&'\"') == Some(&true) || quote.get(&'\'') == Some(&true) {
-                        tmp.push(i);
-                    }else {
-                        quote.insert(i, false);
-                    }
-                },
-                None =>{quote.insert('\\', true);}
-                };
-        },
-        _ => {
-            tmp.push(i);
-        }
-       };
-           
-    }
-    if !tmp.is_empty(){
-        result.push((tmp.to_string(),false));
-    }
-    result
-}

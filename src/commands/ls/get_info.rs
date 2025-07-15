@@ -1,25 +1,28 @@
 use std::{
-    fs::{Metadata, metadata},
+    fs::{metadata, Metadata},
     os::unix::fs::MetadataExt,
     path::Path,
 };
 use users::{get_group_by_gid, get_user_by_uid};
-pub fn get_detailed_info(path : &Path) -> String {
-    let metadata = metadata(path).unwrap();
+pub fn get_detailed_info(path: &Path) -> Result<String, ()> {
+    let metadata = match metadata(path) {
+        Ok(metadata) => metadata,
+        Err(_) => return Err(()),
+    };
 
     let permission = get_permissions(&metadata);
     let owner = get_owner(&metadata);
     let groupe = get_groupe(&metadata);
     let hard_link = metadata.nlink().to_string();
-
+    let file_size = metadata.len().to_string();
     let file_name = match path.file_name() {
         Some(name) => name.to_string_lossy().to_string(),
         None => String::from(""),
     };
-    format!(
-        " {}   {}    {}   {}    {}",
-         permission, hard_link, owner, groupe, file_name
-    )
+    Ok(format!(
+        " {}   {}    {}   {}    {}     {}",
+        permission, hard_link, owner, groupe, file_name, file_size
+    ))
 }
 
 fn get_permissions(metadata: &Metadata) -> String {
@@ -29,9 +32,7 @@ fn get_permissions(metadata: &Metadata) -> String {
     permission.to_string()
 }
 
-pub fn totale_files() {
-   
-}
+pub fn totale_files() {}
 
 fn get_owner(metadata: &Metadata) -> String {
     let uid = metadata.uid();

@@ -9,7 +9,10 @@ pub fn handle_files(files: &Vec<String>, flags: &Flags) -> Result<Vec<Vec<String
         println!("{:?}", file_path);
 
         if flags.l {
-            let detailed_info = get_detailed_info(&file_path);
+            let detailed_info = match get_detailed_info(&file_path) {
+                Ok(info) => info,
+                Err(_) => return Err(()),
+            };
             infos.push(vec![detailed_info]);
         } else {
             infos.push(vec![file.to_string()]);
@@ -52,7 +55,10 @@ pub fn get_hidden_files(dir_path: &Path, flags: &Flags) -> Result<Vec<String>, (
                     if let Some(file_name) = dir_entry.file_name().to_str() {
                         println!("{:?}", &dir_entry);
                         if flags.l {
-                            let details = get_detailed_info(&dir_entry.path());
+                            let details = match get_detailed_info(&dir_entry.path()) {
+                                Ok(info) => info,
+                                Err(_) => return Err(()),
+                            };
                             entries.push(details);
                         } else {
                             entries.push(file_name.to_string());
@@ -78,7 +84,10 @@ pub fn get_files(dir_path: &Path, flags: &Flags) -> Result<Vec<String>, ()> {
                     if let Some(file_name) = dir_entry.file_name().to_str() {
                         if !file_name.starts_with(".") {
                             if flags.l {
-                                let details = get_detailed_info(&dir_entry.path());
+                                let details = match get_detailed_info(&dir_entry.path()) {
+                                    Ok(info) => info,
+                                    Err(_) => return Err(()),
+                                };
                                 entries.push(details);
                                 println!("{:?}", entries)
                             } else {

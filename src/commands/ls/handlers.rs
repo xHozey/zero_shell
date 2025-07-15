@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::{fs::read_dir, path::Path};
 
 use crate::commands::ls::parser::Flags;
 
@@ -17,7 +17,6 @@ pub fn handle_files(files: &Vec<String>, flags: &Flags) -> Result<Vec<Vec<String
     }
     Ok(infos)
 }
-
 
 pub fn handle_dir(dirs: &Vec<String>, flags: &Flags) -> Result<Vec<Vec<String>>, ()> {
     let mut infos = Vec::new();
@@ -41,4 +40,58 @@ pub fn handle_dir(dirs: &Vec<String>, flags: &Flags) -> Result<Vec<Vec<String>>,
     }
     println!("infoos {:?}", &infos);
     Ok(infos)
+}
+
+pub fn get_hidden_files(dir_path: &Path, flags: &Flags) -> Result<Vec<String>, ()> {
+    let mut entries = Vec::new();
+
+    match read_dir(dir_path) {
+        Ok(dir_entries) => {
+            for entry in dir_entries {
+                if let Ok(dir_entry) = entry {
+                    if let Some(file_name) = dir_entry.file_name().to_str() {
+                        println!("{:?}", &dir_entry);
+                        if flags.l {
+                            let details = get_detailed_info(&dir_entry.path());
+                            entries.push(details);
+                        } else {
+                            entries.push(file_name.to_string());
+                        }
+                    }
+                }
+            }
+        }
+        Err(_) => return Err(()),
+    };
+    println!("{:?}", &entries);
+
+    Ok(entries)
+}
+
+pub fn get_files(dir_path: &Path, flags: &Flags) -> Result<Vec<String>, ()> {
+    let mut entries = Vec::new();
+    match read_dir(dir_path) {
+        Ok(dir_entries) => {
+            for entry in dir_entries {
+                dbg!(&entry);
+                if let Ok(dir_entry) = entry {
+                    if let Some(file_name) = dir_entry.file_name().to_str() {
+                        if !file_name.starts_with(".") {
+                            if flags.l {
+                                let details = get_detailed_info(&dir_entry.path());
+                                entries.push(details);
+                                println!("{:?}", entries)
+                            } else {
+                                entries.push(file_name.to_string());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Err(_) => return Err(()),
+    };
+
+    println!("final {:?}", &entries);
+    Ok(entries)
 }

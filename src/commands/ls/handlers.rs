@@ -17,3 +17,28 @@ pub fn handle_files(files: &Vec<String>, flags: &Flags) -> Result<Vec<Vec<String
     }
     Ok(infos)
 }
+
+
+pub fn handle_dir(dirs: &Vec<String>, flags: &Flags) -> Result<Vec<Vec<String>>, ()> {
+    let mut infos = Vec::new();
+
+    for dir in dirs {
+        let dir_path = Path::new(dir);
+
+        if flags.a {
+            let hiden_files = match get_hidden_files(&dir_path, &flags) {
+                Ok(files) => files,
+                Err(()) => return Err(()),
+            };
+            infos.push(hiden_files);
+        }
+
+        let all_files = match get_files(&dir_path, &flags) {
+            Ok(files) => files,
+            Err(()) => return Err(()),
+        };
+        infos.push(all_files);
+    }
+    println!("infoos {:?}", &infos);
+    Ok(infos)
+}

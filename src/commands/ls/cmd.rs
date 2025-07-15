@@ -1,5 +1,5 @@
 use crate::commands::ls::{
-    handlers::handle_files,
+    handlers::{handle_dir, handle_files},
     parser::{parse_ls_args, Flags},
 };
 

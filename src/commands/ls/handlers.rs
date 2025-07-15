@@ -1,6 +1,6 @@
 use std::{fs::read_dir, path::Path};
 
-use crate::commands::ls::parser::Flags;
+use crate::commands::ls::{get_info::get_detailed_info, parser::Flags};
 
 pub fn handle_files(files: &Vec<String>, flags: &Flags) -> Result<Vec<Vec<String>>, ()> {
     let mut infos = Vec::new();

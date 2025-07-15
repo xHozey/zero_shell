@@ -1,4 +1,4 @@
-use crate::commands::ls::parser::{parse_ls_args, Flags};
+use crate::commands::ls::{handlers::handle_files, parser::{parse_ls_args, Flags}};
 
 pub fn ls(args: Vec<String>) {
     let mut files = Vec::new();
@@ -14,5 +14,8 @@ pub fn ls(args: Vec<String>) {
         return;
     };
 
+    let files_infos = handle_files(&files, &flags);
+    println!("informat{:?}", files_infos);
+    
     println!("{:?}  {:?}    {:?}", files, dirs, flags)
 }

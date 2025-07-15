@@ -1,15 +1,28 @@
 use std::env;
 
-pub fn parse_command(s: &str) -> Vec<(String, String)> {
-    let mut res: Vec<(String, String)> = Vec::new();
-    for spt in s.split("&&") {
-        match spt.trim().split_once(' ') {
-            Some((cmd, str)) => res.push((cmd.to_string(), str.to_string())),
-            None => res.push((spt.to_string(), "".to_string())),
-        }
-    }
-    res
+
+pub fn parse_command(input: &str) -> (String, Vec<String>) {
+    let trimed_input = input.trim();
+
+    let line_parts: Vec<&str> = trimed_input.split_whitespace().collect();
+
+    let cmd_name = line_parts[0].to_string();
+    let args: Vec<String> = line_parts[1..].iter().map(|arg| arg.to_string()).collect();
+
+    (cmd_name, args)
 }
+
+
+// pub fn parse_command(s: &str) -> Vec<(String, String)> {
+//     let mut res: Vec<(String, String)> = Vec::new();
+//     for spt in s.split("&&") {
+//         match spt.trim().split_once(' ') {
+//             Some((cmd, str)) => res.push((cmd.to_string(), str.to_string())),
+//             None => res.push((spt.to_string(), "".to_string())),
+//         }
+//     }
+//     res
+// }
 
 pub fn format_prompt() {
     match env::current_dir() {

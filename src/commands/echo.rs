@@ -1,3 +1,3 @@
-pub fn echo(s: String) {
-    println!("{}", s)
+pub fn echo(s: Vec<String>) {
+    println!("{:?}", s)
 }

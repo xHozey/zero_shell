@@ -1,4 +1,5 @@
 use std::env;
+use std::io::*;
 
 pub fn parse_command(s: &str) -> (String, String) {
     // let mut res: (String, String)> = Vec::new();
@@ -23,4 +24,5 @@ pub fn format_prompt() {
 
 pub fn add_buffer_format() {
     print!(">");
+    stdout().flush().unwrap();
 }

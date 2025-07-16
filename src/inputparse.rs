@@ -108,14 +108,38 @@ pub fn parse_arg(str :String) -> Result<Vec<String>, String >{
 
 
 
+pub fn quotes_closed(s: &str) -> bool {
+    let mut in_single_quote = false;
+    let mut in_double_quote = false;
+    let mut escaped = false;
 
-pub fn is_done(s: String) -> bool {
-    
-   let quote = s.matches('\'').count();
-   let dquote =  s.matches('\"').count();
-   let back_s =  s.matches('\\').count();
-   if (quote % 2 == 0 || quote == 0) && (dquote % 2 == 0 || dquote == 0) && (back_s % 2 == 0 || back_s == 0) {
-    return true;
-   }
-    false
+    for c in s.chars() {
+        if escaped {
+            escaped = false;
+            continue;
+        }
+
+        match c {
+            '\\' => {
+                if !in_single_quote {
+                    escaped = true;
+                }
+            }
+            '"' => {
+                if !in_single_quote {
+                    in_double_quote = !in_double_quote;
+                }
+            }
+            '\'' => {
+                if !in_double_quote {
+                    in_single_quote = !in_single_quote;
+                }
+            }
+            _ => {}
+        }
+    }
+
+    // done فقط إلا ما كاين لا quote لا dquote محلولين
+    !in_single_quote && !in_double_quote
 }
+

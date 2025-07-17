@@ -17,67 +17,74 @@ fn main() {
             Ok(_) => {}
             Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase()),
         }
-        let mut commands = parse_command(buffer.trim());
+        let mut command = buffer.trim().to_string();
+        let mut count = 0;
+        let mut new_line_check = false;
         'newscan: loop {
-            if quotes_closed(&commands.1) && !commands.1.ends_with('\\'){
+            if quotes_closed(&command) && !command.ends_with('\\'){
                 break 'newscan;
-            }else if commands.1.ends_with('\\') {
+            }else if command.ends_with('\\') {
                 add_buffer_format();
-            
                 let mut add_buffer = String::new();
                 match stdin().read_line(&mut add_buffer) {
                     Ok(0) => break 'outer,
-                    Ok(_) => { commands.1 += add_buffer.as_str();}
+                    Ok(_) =>  command += add_buffer.trim_end_matches('\n'),
                     Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase()),
                 }
-               
                 break 'newscan;
             }else {
                 add_buffer_format();
                 let mut add_buffer = String::new();
                 match stdin().read_line(&mut add_buffer) {
                     Ok(0) => break 'outer,
-                    Ok(_) => {commands.1 += add_buffer.as_str();}
+                    Ok(_) => {
+                        new_line_check = true;
+                        if count != 0 {
+                            command += add_buffer.as_str();
+                        }else {
+                            command += &("\n".to_owned()+&add_buffer);
+                        }
+                    }
                     Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase()),
                 }
-                
             }
+            count+=1;
         }
-        let args = match parse_arg(commands.1) {
-            Ok(data) => data.join(""),
+        let mut args = match parse_arg(command.to_string()) {
+            Ok(data) => data,
             Err(err ) => {
-                    eprintln!("{}", err.to_ascii_lowercase());
-                    String::new()
-                },
+                eprint!("{}", err.to_ascii_lowercase());
+                String::new()
+            },
         };
-        // for cmd in  {
+        let mut commands = parse_command(&args);
             match commands.0.as_str() {
                 "pwd" => {
                     pwd();
                 }
                 "echo" => {
-                    echo(args);
+                    echo(commands.1);
                 }
                 "cat" => {
-                    cat(args);
+                    cat(commands.1);
                 }
                 "cd" => {
-                    cd(args);
+                    cd(commands.1);
                 }
                 "ls" => {
-                    ls(args);
+                    ls(commands.1);
                 }
                 "cp" => {
-                    cp(args);
+                    cp(commands.1);
                 }
                 "mkdir" => {
-                    mkdir(args);
+                    mkdir(commands.1);
                 }
                 "mv" => {
-                    mv(args);
+                    mv(commands.1);
                 }
                 "rm" => {
-                    rm(args);
+                    rm(commands.1);
                 }
                 "exit" => {
                     break 'outer;
@@ -86,6 +93,5 @@ fn main() {
                     eprintln!("command '{}' not found", commands.0)
                 }
             }
-        // }
     }
 }

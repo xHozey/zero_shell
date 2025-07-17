@@ -1,110 +1,61 @@
-use std::collections::HashMap;
-pub fn parse_arg(str :String) -> Result<Vec<String>, String >{
-    let mut result = vec![];
-    let mut tmp = String::new();
-    let mut quote = HashMap::new();
-    let trim_str = str.trim_start();
-    for i in trim_str.chars() {
-       match i {
-        '\'' => {
-            if !tmp.is_empty(){
-                result.push(tmp.to_string());
-                tmp = String::new();
+use std::collections::HashSet;
+
+pub fn parse_arg(input: String) -> Result<String, String> {
+    let mut result = String::new();
+    let mut current = String::new();
+    let mut active_quote: Option<char> = None;
+    let mut escape = false;
+
+    for c in input.trim_start().chars() {
+        if escape {
+            current.push(c);
+            escape = false;
+            continue;
+        }
+
+        match c {
+            '\\' => {
+                escape = true;
             }
-            match quote.get(&'\'') {
-                Some(true) => {
-                    quote.insert('\'', false);
-                    if !tmp.is_empty(){
-                    result.push(tmp.to_string());
-                    tmp = String::new();
-                }
-                },
-                Some(false) => { 
-                    if quote.get(&'\"') == Some(&true){
-                        tmp.push(i);
-                    }else {
-                        quote.insert(i, true);
+            '\'' | '"' => {
+                if let Some(q) = active_quote {
+                    if q == c {
+                        active_quote = None;
+                        if !current.is_empty() {
+                            result.push_str(&current.clone());
+                            current.clear();
+                        }
+                    } else {
+                        current.push(c);
                     }
-                },
-                None =>{
-                    if quote.get(&'\"') == Some(&true) {
-                        tmp.push(i);
-                    }else {
-                        quote.insert('\'', true);
+                } else {
+                    if !current.is_empty() {
+                        result.push_str(&current.clone());
+                        current.clear();
                     }
+                    active_quote = Some(c);
                 }
-                };
-        },
-        '\"' => {
-            if !tmp.is_empty(){
-                result.push(tmp.to_string());
-                tmp = String::new();
             }
-            match quote.get(&'\"') {
-                Some(true) => {
-                    quote.insert('\"', false);
-                    if !tmp.is_empty(){
-                    result.push(tmp.to_string());
-                    tmp = String::new();
-                    }
-                },
-                Some(false) => { 
-                    if quote.get(&'\'') == Some(&true){
-                        tmp.push(i);
-                    }else {
-                        quote.insert(i, true);
-                    }
-                },
-                None =>{
-                    if quote.get(&'\'') == Some(&true) {
-                    tmp.push(i);
-                }else {
-                    quote.insert('\"', true);
-                }}
-                };
-        },
-        '\\' => {
-            match quote.get(&'\\') {
-                Some(true) => {
-                    tmp.push(i);
-                    if quote.get(&'\"') == Some(&false) && quote.get(&'\'') == Some(&false) {
-                        quote.insert('\\', false);
-                    }
-                },
-                Some(false) => { 
-                    if quote.get(&'\"') == Some(&true) || quote.get(&'\'') == Some(&true) {
-                        tmp.push(i);
-                    }else {
-                        quote.insert(i, false);
-                    }
-                },
-                None =>{
-                    if quote.get(&'\'') == Some(&true) {
-                        tmp.push(i);
-                    }else {
-                        quote.insert('\\', true);
-                    }
+            '`' | ';' => {
+                if active_quote.is_some() || escape {
+                    current.push(c);
+                } else {
+                    return Err(format!(" [{}] not allowed", c));
                 }
-                };
-        },
-        '`' => {
-            if quote.get(&'\\') == Some(&true){
-                tmp.push(i);
-            }else {
-                return Err(" [`] not allowd".to_string());
+            }
+            _ => {
+                current.push(c);
             }
         }
-        _ => {
-            tmp.push(i);
-        }
-       };
-           
     }
-    if !tmp.is_empty(){
-        result.push(tmp.to_string());
+
+    if !current.is_empty() {
+        result.push_str(&current);
     }
+
     Ok(result)
 }
+
 
 
 
@@ -118,7 +69,6 @@ pub fn quotes_closed(s: &str) -> bool {
             escaped = false;
             continue;
         }
-
         match c {
             '\\' => {
                 if !in_single_quote {
@@ -138,8 +88,6 @@ pub fn quotes_closed(s: &str) -> bool {
             _ => {}
         }
     }
-
-    // done فقط إلا ما كاين لا quote لا dquote محلولين
     !in_single_quote && !in_double_quote
 }
 

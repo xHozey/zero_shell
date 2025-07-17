@@ -44,11 +44,9 @@ pub fn echo(s: String) {
         } else {
             result.push(chars[i]);
         }
-
         i += 1;
     }
-    let yu = result.trim_matches('\"').trim_matches('\'');
-    println!("{}", yu.replace("\\", ""));
+    print!("{}", result.replace("\\", ""));
 }
 
 

@@ -2,14 +2,10 @@ use std::env;
 use std::io::*;
 
 pub fn parse_command(s: &str) -> (String, String) {
-    // let mut res: (String, String)> = Vec::new();
-    // for spt in s.split("&&") {
         match s.trim().split_once(' ') {
             Some((cmd, str)) => return (cmd.to_string(), str.to_string()),
             None => return (s.to_string(), "".to_string()),
         }
-    // }
-    // res
 }
 
 pub fn format_prompt() {

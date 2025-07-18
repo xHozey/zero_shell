@@ -1,4 +1,8 @@
-use std::{fs::read_dir, path::Path};
+use std::{
+    fs::{read_dir, DirEntry},
+    os::unix::fs::MetadataExt,
+    path::Path,
+};
 
 use crate::commands::ls::{get_info::get_detailed_info, parser::Flags};
 
@@ -47,6 +51,7 @@ pub fn handle_dir(dirs: &Vec<String>, flags: &Flags) -> Result<Vec<DirInfo>, ()>
 
 pub fn get_dir_entries(dir_path: &Path, flags: &Flags) -> Result<DirInfo, ()> {
     let mut result = Vec::new();
+    let mut total_blocks = 0;
 
     match read_dir(dir_path) {
         Ok(dir_entries) => {
@@ -58,6 +63,8 @@ pub fn get_dir_entries(dir_path: &Path, flags: &Flags) -> Result<DirInfo, ()> {
                     if !flags.a && file_name.starts_with(".") {
                         continue;
                     }
+
+                    total_blocks += get_total_blocks(&entry);
 
                     if flags.l {
                         let details = match get_detailed_info(&entry.path()) {
@@ -76,7 +83,16 @@ pub fn get_dir_entries(dir_path: &Path, flags: &Flags) -> Result<DirInfo, ()> {
 
     Ok(DirInfo {
         entries: result,
-        total_blocks: 0,
+        total_blocks,
         dir_name: dir_path.display().to_string(),
     })
+}
+
+fn get_total_blocks(entry: &DirEntry) -> u64 {
+    if let Ok(metadata) = entry.metadata() {
+        let blocks = metadata.blocks();
+        (blocks + 1) / 2 // +1 for rounding
+    } else {
+        0
+    }
 }

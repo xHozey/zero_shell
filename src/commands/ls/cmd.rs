@@ -22,6 +22,7 @@ pub fn ls(args: Vec<String>) {
 
     if let Ok(dir_infos) = handle_dir(&dirs, &flags) {
         for dir in dir_infos {
+            println!("total {}", dir.total_blocks);
             println!("{}:", dir.dir_name);
             for file in dir.entries {
                 println!("{:?}", file);

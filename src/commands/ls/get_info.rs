@@ -1,5 +1,6 @@
 use chrono::{DateTime, Duration, Local};
 use std::{
+    ffi::CString,
     fs::{symlink_metadata, Metadata},
     os::unix::fs::{FileTypeExt, MetadataExt},
     path::Path,
@@ -47,8 +48,22 @@ fn get_permissions(metadata: &Metadata, path: &Path) -> String {
     permission
 }
 
-fn has_acl(_path: &Path) -> bool {
-    return false;
+fn has_acl(path: &Path) -> bool {
+    let path_str = path.to_string_lossy().to_string();
+    let path_c = match CString::new(path_str) {
+        Ok(c_str) => c_str,
+        Err(_) => return false,
+    };
+
+    unsafe {
+        let result = libc::getxattr(
+            path_c.as_ptr(),
+            b"system.posix_acl_access\0".as_ptr() as *const i8,
+            std::ptr::null_mut(),
+            0,
+        );
+        result > 0
+    }
 }
 
 fn get_owner(metadata: &Metadata) -> String {

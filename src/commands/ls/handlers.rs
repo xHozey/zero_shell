@@ -1,10 +1,9 @@
-use std::{
-    fs::{read_dir, DirEntry},
-    os::unix::fs::MetadataExt,
-    path::Path,
-};
+use std::{fs::read_dir, path::Path};
 
-use crate::commands::ls::{get_info::get_detailed_info, parser::Flags};
+use crate::commands::ls::{
+    get_info::{get_detailed_info, get_total_blocks},
+    parser::Flags,
+};
 
 #[derive(Debug)]
 #[allow(dead_code)]
@@ -64,9 +63,9 @@ pub fn get_dir_entries(dir_path: &Path, flags: &Flags) -> Result<DirInfo, ()> {
                         continue;
                     }
 
-                    total_blocks += get_total_blocks(&entry);
-
                     if flags.l {
+                        total_blocks += get_total_blocks(&entry);
+
                         let details = match get_detailed_info(&entry.path()) {
                             Ok(info) => info,
                             Err(_) => return Err(()),
@@ -86,13 +85,4 @@ pub fn get_dir_entries(dir_path: &Path, flags: &Flags) -> Result<DirInfo, ()> {
         total_blocks,
         dir_name: dir_path.display().to_string(),
     })
-}
-
-fn get_total_blocks(entry: &DirEntry) -> u64 {
-    if let Ok(metadata) = entry.metadata() {
-        let blocks = metadata.blocks();
-        (blocks + 1) / 2 // +1 for rounding
-    } else {
-        0
-    }
 }

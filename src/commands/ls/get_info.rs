@@ -1,7 +1,7 @@
 use chrono::{DateTime, Duration, Local};
 use std::{
     ffi::CString,
-    fs::{symlink_metadata, Metadata},
+    fs::{symlink_metadata, DirEntry, Metadata},
     os::unix::fs::{FileTypeExt, MetadataExt},
     path::Path,
 };
@@ -116,4 +116,12 @@ fn get_major_minor(metadata: &Metadata) -> String {
     let minor = libc::minor(rdev);
 
     format!("{}, {}", major, minor)
+}
+
+pub fn get_total_blocks(entry: &DirEntry) -> u64 {
+    if let Ok(metadata) = entry.metadata() {
+        metadata.blocks() / 2
+    } else {
+        0
+    }
 }

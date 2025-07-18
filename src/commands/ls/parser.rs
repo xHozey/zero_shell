@@ -11,7 +11,7 @@ pub fn parse_ls_args(
     files: &mut Vec<String>,
     dirs: &mut Vec<String>,
     flags: &mut Flags,
-) -> Result<(), ()> {
+) -> Result<(), String> {
     for arg in args {
         if arg.starts_with("-") {
             for char in arg.chars().skip(1) {
@@ -25,7 +25,7 @@ pub fn parse_ls_args(
                     'F' => {
                         flags.f = true;
                     }
-                    _ => return Err(()),
+                    _ => return Err(format!("{char} not supported flag only -l, -a, -F")),
                 }
             }
         } else {
@@ -34,7 +34,9 @@ pub fn parse_ls_args(
             } else if Path::new(&arg).exists() {
                 files.push(arg);
             } else {
-                return Err(());
+                return Err(format!(
+                    "ls: cannot access '{arg}': No such file or directory"
+                ));
             }
         }
     }

@@ -1,7 +1,4 @@
-use crate::commands::ls::{
-    handlers::{handle_dir, handle_files},
-    parser::{parse_ls_args, Flags},
-};
+use crate::commands::ls::{handlers::*, parser::*};
 
 pub fn ls(args: Vec<String>) {
     let mut files = Vec::new();
@@ -12,16 +9,23 @@ pub fn ls(args: Vec<String>) {
         f: false,
     };
 
-    if let Err(()) = parse_ls_args(args, &mut files, &mut dirs, &mut flags) {
-        println!("Error parssing arguments");
+    if let Err(e) = parse_ls_args(args, &mut files, &mut dirs, &mut flags) {
+        println!("{}", e);
         return;
     };
 
-    let files_infos = handle_files(&files, &flags);
-    println!("informat{:?}", files_infos);
+    if let Ok(files_infos) = handle_files(&files, &flags) {
+        for file in files_infos {
+            println!("{:?}", file);
+        }
+    }
 
-    let dir_infos = handle_dir(&dirs, &flags);
-    println!(" dir_infos : {:?}", dir_infos);
-
-    println!("{:?}  {:?}    {:?}", files, dirs, flags)
+    if let Ok(dir_infos) = handle_dir(&dirs, &flags) {
+        for dir in dir_infos {
+            println!("{}:", dir.dir_name);
+            for file in dir.entries {
+                println!("{:?}", file);
+            }
+        }
+    };
 }

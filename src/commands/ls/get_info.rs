@@ -1,7 +1,7 @@
 use chrono::{DateTime, Duration, Local};
 use std::{
     ffi::CString,
-    fs::{symlink_metadata, DirEntry, Metadata},
+    fs::{self, symlink_metadata, DirEntry, Metadata},
     os::unix::fs::{FileTypeExt, MetadataExt},
     path::Path,
 };
@@ -22,10 +22,7 @@ pub fn get_detailed_info(path: &Path) -> Result<Vec<String>, String> {
         Ok(date) => date,
         Err(e) => return Err(e),
     };
-    let file_name = match path.file_name() {
-        Some(name) => name.to_string_lossy().to_string(),
-        None => String::from(""),
-    };
+    let file_name = get_name_with_link(&metadata, path);
 
     Ok(vec![
         permission,
@@ -116,6 +113,24 @@ fn get_major_minor(metadata: &Metadata) -> String {
     let minor = libc::minor(rdev);
 
     format!("{}, {}", major, minor)
+}
+
+fn get_name_with_link(metadata: &Metadata, path: &Path) -> String {
+    let mut full_name = match path.file_name() {
+        Some(name) => name.to_string_lossy().to_string(),
+        None => String::from(""),
+    };
+
+    if metadata.file_type().is_symlink() {
+        let link_name = match fs::read_link(path) {
+            Ok(target) => target.to_string_lossy().to_string(),
+            Err(_) => String::from(""),
+        };
+        full_name.push_str(" -> ");
+        full_name.push_str(&link_name);
+    }
+
+    full_name
 }
 
 pub fn get_total_blocks(entry: &DirEntry) -> u64 {

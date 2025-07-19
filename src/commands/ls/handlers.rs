@@ -2,7 +2,8 @@ use std::{fs::read_dir, path::Path};
 
 use crate::commands::ls::{
     get_info::{get_detailed_info, get_total_blocks},
-    parser::Flags, utils::{cleaner, get_absolute_parent},
+    parser::Flags,
+    utils::{cleaner, get_absolute_parent},
 };
 
 #[derive(Debug)]
@@ -12,8 +13,16 @@ pub struct DirInfo {
     pub dir_name: String,
 }
 
-pub fn handle_files(files: &Vec<String>, flags: &Flags) -> Result<Vec<Vec<String>>, ()> {
+pub fn handle_files(files: &mut Vec<String>, flags: &Flags) -> Result<Vec<Vec<String>>, ()> {
     let mut infos = Vec::new();
+
+    files.sort_by(|a, b| {
+        let a_new = cleaner(a.to_string());
+        let b_new = cleaner(b.to_string());
+
+        a_new.cmp(&b_new)
+    });
+
     for file in files {
         let file_path = Path::new(file);
 

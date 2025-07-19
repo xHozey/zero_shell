@@ -1,4 +1,4 @@
-use crate::commands::ls::{handlers::*, parser::*};
+use crate::commands::ls::{display::display, handlers::*, parser::*};
 
 pub fn ls(args: Vec<String>) {
     let mut files = Vec::new();
@@ -14,19 +14,15 @@ pub fn ls(args: Vec<String>) {
         return;
     };
 
-    if let Ok(files_infos) = handle_files(&files, &flags) {
-        for file in files_infos {
-            println!("{:?}", file);
-        }
-    }
-
-    if let Ok(dir_infos) = handle_dir(&dirs, &flags) {
-        for dir in dir_infos {
-            println!("total {}", dir.total_blocks);
-            println!("{}:", dir.dir_name);
-            for file in dir.entries {
-                println!("{:?}", file);
-            }
-        }
+    let files_infos = match handle_files(&mut files, &flags) {
+        Ok(infos) => infos,
+        Err(_) => Vec::new(),
     };
+
+    let dir_infos = match handle_dir(&dirs, &flags) {
+        Ok(infos) => infos,
+        Err(_) => Vec::new(),
+    };
+
+    display(files_infos, dir_infos, flags);
 }

@@ -15,8 +15,10 @@ fn main() {
             Ok(_) => {}
             Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase()),
         }
-        let commands = parse_command(buffer.trim());
+        let commands = parse_tokens(tokenizer(buffer.trim().to_string()));
+
         for (cmd, args) in commands {
+            let args = args.join(" ").trim().to_string();
             match cmd.as_str() {
                 "pwd" => {
                     pwd();

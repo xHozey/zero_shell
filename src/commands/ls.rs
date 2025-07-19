@@ -65,7 +65,7 @@ pub fn ls(s: String) {
                                 if let Ok(metadata) = entry.metadata() {
                                     if metadata.is_dir() {
                                         buffer.push('/')
-                                    } else if metadata.is_sy
+                                    }
 
                                 } 
                             }

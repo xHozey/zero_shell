@@ -1,7 +1,7 @@
 use chrono::{DateTime, Duration, Local};
 use std::{
     ffi::CString,
-    fs::{self, symlink_metadata, DirEntry, Metadata},
+    fs::{self, symlink_metadata, Metadata},
     os::unix::fs::{FileTypeExt, MetadataExt},
     path::Path,
 };
@@ -12,7 +12,6 @@ pub fn get_detailed_info(path: &Path) -> Result<Vec<String>, String> {
         Ok(metadata) => metadata,
         Err(e) => return Err(e.to_string()),
     };
-
     let permission = get_permissions(&metadata, path);
     let hard_link = metadata.nlink().to_string();
     let owner = get_owner(&metadata);
@@ -68,7 +67,7 @@ fn get_owner(metadata: &Metadata) -> String {
 
     match get_user_by_uid(uid) {
         Some(user) => user.name().to_string_lossy().to_string(),
-        None => String::from("{uid}"),
+        None => String::from(format!("{uid}")),
     }
 }
 
@@ -77,7 +76,7 @@ fn get_group(metadata: &Metadata) -> String {
 
     match get_group_by_gid(gid) {
         Some(groupe) => groupe.name().to_string_lossy().to_string(),
-        None => String::from("{gid}"),
+        None => String::from(format!("{gid}")),
     }
 }
 
@@ -133,8 +132,8 @@ fn get_name_with_link(metadata: &Metadata, path: &Path) -> String {
     full_name
 }
 
-pub fn get_total_blocks(entry: &DirEntry) -> u64 {
-    if let Ok(metadata) = entry.metadata() {
+pub fn get_total_blocks(entry: &Path) -> u64 {
+    if let Ok(metadata) = entry.symlink_metadata() {
         metadata.blocks() / 2
     } else {
         0

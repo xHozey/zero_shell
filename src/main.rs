@@ -18,7 +18,7 @@ fn main() {
         let commands = parse_tokens(tokenizer(buffer.trim().to_string()));
 
         for (cmd, args) in commands {
-            let args = args.join(" ").trim().to_string();
+            let args = args.join(" ").to_string();
             match cmd.as_str() {
                 "pwd" => {
                     pwd();

@@ -111,7 +111,7 @@ fn get_major_minor(metadata: &Metadata) -> String {
     let major = libc::major(rdev);
     let minor = libc::minor(rdev);
 
-    format!("{}, {}", major, minor)
+     format!("{:>4}, {:>5}", major, minor)
 }
 
 fn get_name_with_link(metadata: &Metadata, path: &Path) -> String {

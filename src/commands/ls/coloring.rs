@@ -2,7 +2,7 @@ use colored::Colorize;
 
 use crate::commands::ls::parser::Flags;
 pub enum Color {
-    Browen,
+    Brown,
     Blue,
     Green,
     Skybleu,
@@ -11,7 +11,7 @@ pub enum Color {
 
 pub fn coloring(file: &String, color: Color) -> String {
     let colored_file = match color {
-        Color::Browen => file.truecolor(165, 42, 42).to_string(),
+        Color::Brown => file.truecolor(165, 42, 42).to_string(),
         Color::Blue => file.blue().to_string(),
         Color::Green => file.green().to_string(),
         Color::Skybleu => file.bright_blue().to_string(),

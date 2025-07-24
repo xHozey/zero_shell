@@ -9,29 +9,43 @@ use crate::commands::ls::{coloring::*, handlers::DirInfo, parser::Flags};
 pub fn display(files_info: Vec<Vec<String>>, dirs_info: Vec<DirInfo>, flags: Flags) {
     if !files_info.is_empty() {
         if flags.l {
-            format_output(files_info, &flags);
+            format_output(&files_info, None, &flags);
         } else {
             for infos in files_info {
-                let file_name = infos[0].clone();
-                if flags.f {
-                    let name = add_file_type_indicator(&file_name, &flags);
-                    print!("{}  ", name)
-                } else {
-                    print!("{}  ", file_name)
-                }
+                let path_str = infos[0].clone();
+                let name = colored_output(&path_str, None, &flags);
+                print!("{}  ", name)
             }
             println!()
+        }
+
+        if !dirs_info.is_empty() {
+            println!();
+            for dir in &dirs_info {
+                println!("{}:", dir.dir_name)
+            }
         }
     }
 
     if !dirs_info.is_empty() {
-        for dir in dirs_info {
+        for (idx, dir) in dirs_info.iter().enumerate() {
+            if dirs_info.len() >= 2 {
+                println!("{}:", &dir.dir_name);
+            }
             if flags.l {
                 println!("total {}", dir.total_blocks);
-
-                format_output(dir.entries, &flags);
+                format_output(&dir.entries, Some(&dir.dir_name), &flags)
             } else {
-                println!("{}", dir.dir_name)
+                for infos in &dir.entries {
+                    let path_str = infos[0].clone();
+
+                    let name = colored_output(&path_str, None, &flags);
+                    print!("{}  ", name);
+                }
+                println!();
+            }
+            if idx != dirs_info.len() - 1 {
+                println!();
             }
         }
     }
@@ -51,35 +65,67 @@ fn get_max_width(infos: &Vec<Vec<String>>) -> Vec<usize> {
     cols_width
 }
 
-fn add_file_type_indicator(file: &String, flags: &Flags) -> String {
-    let path = Path::new(file);
+fn colored_output(file: &String, dir_name: Option<&str>, flags: &Flags) -> String {
+    if file.contains(" -> ") {
+        let parts: Vec<&str> = file.split(" -> ").collect();
+        if parts.len() == 2 {
+            let symlink_name = parts[0].to_string();
+            let target_path = parts[1];
+
+            let colored_name = color_symlink(&symlink_name, Color::Skybleu, flags);
+            return format!("{} -> {}", colored_name, target_path);
+        }
+    }
+
+    // Construct full path for metadata
+    let full_path = match dir_name {
+        Some(dir) => {
+            if file == "." {
+                dir.to_string()
+            } else if file == ".." {
+                Path::new(dir)
+                    .parent()
+                    .map(|p| p.to_string_lossy().to_string())
+                    .unwrap_or_else(|| dir.to_string())
+            } else {
+                Path::new(dir).join(file).to_string_lossy().to_string()
+            }
+        }
+        None => file.clone(),
+    };
+
+    let path = Path::new(&full_path);
+
+    // Use the original filename for display
+    let file_name = file.clone();
+
+    // Use full path for metadata
     let metadata = match symlink_metadata(path) {
         Ok(metadata) => metadata,
-        Err(_) => return file.to_string(),
+        Err(_) => return file_name,
     };
+
     let file_type = metadata.file_type();
     let mode = metadata.mode();
 
     if file_type.is_dir() {
-        color_dir(file, Color::Blue, flags)
-    } else if file_type.is_symlink() {
-        color_symlink(file, Color::Skybleu, flags)
+        color_dir(&file_name, Color::Blue, flags)
     } else if file_type.is_fifo() {
-        color_pipe(file, Color::Browen, flags)
+        color_pipe(&file_name, Color::Brown, flags)
     } else if file_type.is_socket() {
-        color_socket(file, Color::Red, flags)
+        color_socket(&file_name, Color::Red, flags)
     } else if file_type.is_block_device() || file_type.is_char_device() {
-        color_devices(file, Color::Browen)
+        color_devices(&file_name, Color::Brown)
     } else {
         if mode & 0o111 != 0 {
-            color_exec_file(file, Color::Green, flags)
+            color_exec_file(&file_name, Color::Green, flags)
         } else {
-            file.to_string()
+            file_name
         }
     }
 }
 
-fn format_output(infos: Vec<Vec<String>>, flags: &Flags) {
+fn format_output(infos: &Vec<Vec<String>>, dir_name: Option<&str>, flags: &Flags) {
     let cols_width = get_max_width(&infos);
     for infos in infos {
         for (idx, w) in cols_width.iter().enumerate() {
@@ -87,13 +133,8 @@ fn format_output(infos: Vec<Vec<String>>, flags: &Flags) {
                 //left aligned
                 print!("{:<width$}", infos[idx], width = *w);
             } else if idx == cols_width.len() - 1 {
-                if flags.f {
-                    let file_name = add_file_type_indicator(&infos[idx], flags);
-                    print!(" {}", file_name);
-                } else {
-                    // no extra spacing
-                    print!(" {}", infos[idx]);
-                }
+                let file_name = colored_output(&infos[idx], dir_name, flags);
+                print!(" {}", file_name);
             } else if idx == 1 || idx == 4 {
                 print!("{:>width$}", infos[idx], width = *w);
             } else {

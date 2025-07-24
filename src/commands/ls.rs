@@ -1,12 +1,14 @@
-use std::{fs, path::Path};
+use std::{
+    fs::{self, DirEntry},
+    path::Path,
+};
 
-pub fn ls(s: String) {
-    let args: Vec<&str> = s.split_whitespace().collect();
+pub fn ls(args: Vec<String>) {
     let mut long = false;
     let mut all = false;
     let mut classify = false;
     let mut paths = Vec::new();
-    for arg in args {
+    for arg in &args {
         if arg.starts_with('-') {
             for ch in arg.chars().skip(1) {
                 match ch {
@@ -35,16 +37,16 @@ pub fn ls(s: String) {
         if path.is_dir() {
             match fs::read_dir(path) {
                 Ok(entries) => {
-                   let mut entries: Vec<_> = entries.collect();
+                    let mut entries: Vec<_> = entries.collect();
                     entries.sort_by_key(|e| {
-                         e.as_ref()
-                        .map(|e| {
-                            let name = e.file_name().to_string_lossy().to_string();
-                            let sort_key = name.strip_prefix('.').unwrap_or(&name);
-                            sort_key.to_lowercase()  
-                        })
-                        .unwrap_or_default()
-                     });
+                        e.as_ref()
+                            .map(|e| {
+                                let name = e.file_name().to_string_lossy().to_string();
+                                let sort_key = name.strip_prefix('.').unwrap_or(&name);
+                                sort_key.to_lowercase()
+                            })
+                            .unwrap_or_default()
+                    });
                     let mut buffer = String::new();
                     if all {
                         if classify {
@@ -61,14 +63,10 @@ pub fn ls(s: String) {
                                 continue;
                             }
                             buffer.push_str(&file_name_str);
-                            if classify  {
-                                if let Ok(metadata) = entry.metadata() {
-                                    if metadata.is_dir() {
-                                        buffer.push('/')
-                                    }
-
-                                } 
+                            if classify {
+                                buffer.push(classify_flag(entry));
                             }
+                            if long {}
                             buffer.push(' ');
                         }
                     }
@@ -78,11 +76,26 @@ pub fn ls(s: String) {
                     } else {
                         res.push_str(buffer.trim());
                     }
-                },
-                Err(err) => eprintln!("ls: {}", err.to_string().to_ascii_lowercase())
+                }
+                Err(err) => eprintln!("ls: {}", err.to_string().to_ascii_lowercase()),
             }
         } else {
         }
     }
     println!("{}", res.trim())
+}
+
+fn classify_flag(entry: DirEntry) -> char {
+    if let Ok(metadata) = entry.metadata() {
+        if metadata.is_dir() {
+            return '/';
+        }
+    }
+    '\0'
+}
+
+fn long_flag(entry: DirEntry) -> String {
+    let mut res = String::new();
+
+    res
 }

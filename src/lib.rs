@@ -1,4 +1,5 @@
 use std::{env, io::*};
+
 #[derive(PartialEq)]
 enum State {
     Normal,
@@ -96,12 +97,16 @@ pub fn tokenizer(mut input: String) -> Vec<Token> {
             } else {
                 print!("quote> ");
             }
-            stdout().flush().unwrap();
+            if let Err(err) = stdout().flush() {
+                eprintln!("{}", err.to_string().to_ascii_lowercase());
+                continue;
+            }
 
             let mut more_input = String::new();
-            stdin()
-                .read_line(&mut more_input)
-                .expect("hadxi mosta7il ikhsr");
+            if let Err(err) = stdin().read_line(&mut more_input) {
+                eprintln!("{}", err.to_string().to_ascii_lowercase())
+            }
+
             input = more_input;
             token_buffer.push('\n');
         } else {

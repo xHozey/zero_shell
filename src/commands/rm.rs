@@ -1,16 +1,15 @@
 use std::fs;
 use std::path::Path;
-pub fn rm(s: String) {
+pub fn rm(args: Vec<String>) {
     let mut flag = false;
-    let args: Vec<&str> = s.split_whitespace().collect();
-    if args.contains(&"-r") {
+    if args.contains(&"-r".to_string()) {
         flag = true
     }
     for file in args {
         if file == "-r" {
             continue;
         }
-        let f = Path::new(file);
+        let f = Path::new(&file);
         if f.exists() {
             if flag {
                 if f.is_dir() {

@@ -1,7 +1,7 @@
 use std::fs::read;
 use std::io::stdin;
-pub fn cat(s: String) {
-    if s.is_empty() {
+pub fn cat(args: Vec<String>) {
+    if args.is_empty() {
         loop {
             let mut buffer = String::new();
             match stdin().read_line(&mut buffer) {
@@ -14,7 +14,7 @@ pub fn cat(s: String) {
             println!("{}", buffer.trim())
         }
     } else {
-        for s in s.split_whitespace() {
+        for s in args{
             match read(s) {
                 Ok(content) => match String::from_utf8(content) {
                     Ok(v) => print!("{}", v),

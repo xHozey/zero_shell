@@ -20,5 +20,7 @@ pub fn format_prompt() {
 
 pub fn add_buffer_format() {
     print!(">");
-    stdout().flush().unwrap();
+    if let Err(err) = stdout().flush() {
+        eprintln!("{}", err.to_string().to_ascii_lowercase())
+    }
 }

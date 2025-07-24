@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
-pub fn parse_arg(input: String) -> Result<String, String> {
-    let mut result = String::new();
+pub fn parse_arg(input: String) -> Result< Vec<String>, String> {
+    let mut result = Vec::new();
     let mut current = String::new();
     let mut active_quote: Option<char> = None;
     let mut escape = false;
@@ -17,12 +17,19 @@ pub fn parse_arg(input: String) -> Result<String, String> {
             '\\' => {
                 escape = true;
             }
+            ' ' => {
+                 if let Some(q) = active_quote {
+                    
+                }else{
+
+                 }
+            }
             '\'' | '"' => {
                 if let Some(q) = active_quote {
                     if q == c {
                         active_quote = None;
                         if !current.is_empty() {
-                            result.push_str(&current.clone());
+                            result.push(current.clone());
                             current.clear();
                         }
                     } else {
@@ -30,7 +37,7 @@ pub fn parse_arg(input: String) -> Result<String, String> {
                     }
                 } else {
                     if !current.is_empty() {
-                        result.push_str(&current.clone());
+                        result.push(current.clone());
                         current.clear();
                     }
                     active_quote = Some(c);
@@ -50,7 +57,7 @@ pub fn parse_arg(input: String) -> Result<String, String> {
     }
 
     if !current.is_empty() {
-        result.push_str(&current);
+        result.push(current);
     }
 
     Ok(result)

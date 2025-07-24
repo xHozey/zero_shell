@@ -54,44 +54,45 @@ fn main() {
             Ok(data) => data,
             Err(err ) => {
                 eprint!("{}", err.to_ascii_lowercase());
-                String::new()
+                Vec::new()
             },
         };
-        let mut commands = parse_command(&args);
-            match commands.0.as_str() {
-                "pwd" => {
-                    pwd();
-                }
-                "echo" => {
-                    echo(commands.1);
-                }
-                "cat" => {
-                    cat(commands.1);
-                }
-                "cd" => {
-                    cd(commands.1);
-                }
-                "ls" => {
-                    ls(commands.1);
-                }
-                "cp" => {
-                    cp(commands.1);
-                }
-                "mkdir" => {
-                    mkdir(commands.1);
-                }
-                "mv" => {
-                    mv(commands.1);
-                }
-                "rm" => {
-                    rm(commands.1);
-                }
-                "exit" => {
-                    break 'outer;
-                }
-                _ => {
-                    eprintln!("command '{}' not found", commands.0)
-                }
-            }
+        println!("{:?}",args);
+        // let mut commands = parse_command(&args);
+        //     match commands.0.as_str() {
+        //         "pwd" => {
+        //             pwd();
+        //         }
+        //         "echo" => {
+        //             echo(commands.1);
+        //         }
+        //         "cat" => {
+        //             cat(commands.1);
+        //         }
+        //         "cd" => {
+        //             cd(commands.1);
+        //         }
+        //         "ls" => {
+        //             ls(commands.1);
+        //         }
+        //         "cp" => {
+        //             cp(commands.1);
+        //         }
+        //         "mkdir" => {
+        //             mkdir(commands.1);
+        //         }
+        //         "mv" => {
+        //             mv(commands.1);
+        //         }
+        //         "rm" => {
+        //             rm(commands.1);
+        //         }
+        //         "exit" => {
+        //             break 'outer;
+        //         }
+        //         _ => {
+        //             eprintln!("command '{}' not found", commands.0)
+        //         }
+        //     }
     }
 }

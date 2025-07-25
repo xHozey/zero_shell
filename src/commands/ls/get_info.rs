@@ -91,9 +91,9 @@ fn get_date_time(metadata: &Metadata) -> Result<String, String> {
     let now = Local::now();
     let six_month = now - Duration::seconds(6 * 30 * 24 * 60 * 60);
     if date > six_month {
-        Ok(date.format("%b %d %H:%M").to_string())
+        Ok(date.format("%b %e %H:%M").to_string())
     } else {
-        Ok(date.format("%b %d %Y").to_string())
+        Ok(date.format("%b %e %Y").to_string())
     }
 }
 

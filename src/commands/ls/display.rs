@@ -66,6 +66,7 @@ fn get_max_width(infos: &Vec<Vec<String>>) -> Vec<usize> {
 }
 
 fn colored_output(file: &String, dir_name: Option<&str>, flags: &Flags) -> String {
+    dbg!(file);
     if file.contains(" -> ") {
         let parts: Vec<&str> = file.split(" -> ").collect();
         if parts.len() == 2 {
@@ -97,7 +98,10 @@ fn colored_output(file: &String, dir_name: Option<&str>, flags: &Flags) -> Strin
     let path = Path::new(&full_path);
 
     // Use the original filename for display
-    let file_name = file.clone();
+    let file_name = match path.file_name() {
+        Some(name) => name.to_string_lossy().to_string(),
+        None => file.clone(),
+    };
 
     // Use full path for metadata
     let metadata = match symlink_metadata(path) {
@@ -116,6 +120,8 @@ fn colored_output(file: &String, dir_name: Option<&str>, flags: &Flags) -> Strin
         color_socket(&file_name, Color::Red, flags)
     } else if file_type.is_block_device() || file_type.is_char_device() {
         color_devices(&file_name, Color::Brown)
+    } else if file_type.is_symlink() {
+        color_symlink(&file_name, Color::Skybleu, flags)
     } else {
         if mode & 0o111 != 0 {
             color_exec_file(&file_name, Color::Green, flags)

@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 pub fn parse_arg(input: String) -> Result< Vec<String>, String> {
     let mut result = Vec::new();
     let mut current = String::new();
@@ -18,10 +16,12 @@ pub fn parse_arg(input: String) -> Result< Vec<String>, String> {
                 escape = true;
             }
             ' ' => {
-                 if let Some(q) = active_quote {
-                    
-                }else{
+                 if let Some(_q) = active_quote {
+                    current.push(c);
 
+                }else{
+                    result.push(current.clone());
+                    current.clear();
                  }
             }
             '\'' | '"' => {

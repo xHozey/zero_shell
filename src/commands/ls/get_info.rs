@@ -12,15 +12,22 @@ pub fn get_detailed_info(path: &Path) -> Result<Vec<String>, String> {
         Ok(metadata) => metadata,
         Err(e) => return Err(e.to_string()),
     };
+
     let permission = get_permissions(&metadata, path);
+
     let hard_link = metadata.nlink().to_string();
+
     let owner = get_owner(&metadata);
+
     let groupe = get_group(&metadata);
+
     let file_size = get_file_size(&metadata);
+
     let last_modified = match get_date_time(&metadata) {
         Ok(date) => date,
         Err(e) => return Err(e),
     };
+
     let file_name = get_name_with_link(&metadata, path);
 
     Ok(vec![

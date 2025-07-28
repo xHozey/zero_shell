@@ -13,7 +13,7 @@ pub struct DirInfo {
     pub dir_name: String,
 }
 
-pub fn handle_files(files: &mut Vec<String>, flags: &Flags) -> Result<Vec<Vec<String>>, ()> {
+pub fn handle_files(files: &mut Vec<String>, flags: &Flags) -> Result<Vec<Vec<String>>, String> {
     let mut infos = Vec::new();
 
     files.sort_by(|a, b| {
@@ -29,7 +29,7 @@ pub fn handle_files(files: &mut Vec<String>, flags: &Flags) -> Result<Vec<Vec<St
         if flags.l {
             let detailed_info = match get_detailed_info(&file_path) {
                 Ok(info) => info,
-                Err(_) => return Err(()),
+                Err(e) => return Err(e.to_string()),
             };
             infos.push(detailed_info);
         } else {
@@ -39,7 +39,7 @@ pub fn handle_files(files: &mut Vec<String>, flags: &Flags) -> Result<Vec<Vec<St
     Ok(infos)
 }
 
-pub fn handle_dir(dirs: &Vec<String>, flags: &Flags) -> Result<Vec<DirInfo>, ()> {
+pub fn handle_dir(dirs: &Vec<String>, flags: &Flags) -> Result<Vec<DirInfo>, String> {
     let mut infos = Vec::new();
 
     for dir in dirs {
@@ -47,7 +47,7 @@ pub fn handle_dir(dirs: &Vec<String>, flags: &Flags) -> Result<Vec<DirInfo>, ()>
 
         let entries = match get_dir_entries(&dir_path, &flags) {
             Ok(files) => files,
-            Err(()) => return Err(()),
+            Err(e) => return Err(e.to_owned()),
         };
 
         infos.push(entries)
@@ -56,7 +56,7 @@ pub fn handle_dir(dirs: &Vec<String>, flags: &Flags) -> Result<Vec<DirInfo>, ()>
     Ok(infos)
 }
 
-pub fn get_dir_entries(dir_path: &Path, flags: &Flags) -> Result<DirInfo, ()> {
+pub fn get_dir_entries(dir_path: &Path, flags: &Flags) -> Result<DirInfo, String> {
     let mut result = Vec::new();
     let mut total_blocks = 0;
 
@@ -98,7 +98,7 @@ pub fn get_dir_entries(dir_path: &Path, flags: &Flags) -> Result<DirInfo, ()> {
 
                         let details = match get_detailed_info(&entry.path()) {
                             Ok(info) => info,
-                            Err(_) => return Err(()),
+                            Err(e) => return Err(e),
                         };
                         result.push(details);
                     } else {
@@ -107,7 +107,7 @@ pub fn get_dir_entries(dir_path: &Path, flags: &Flags) -> Result<DirInfo, ()> {
                 }
             }
         }
-        Err(_) => return Err(()),
+        Err(e) => return Err(e.to_string()),
     };
 
     Ok(DirInfo {

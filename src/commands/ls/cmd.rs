@@ -16,12 +16,18 @@ pub fn ls(args: Vec<String>) {
 
     let files_infos = match handle_files(&mut files, &flags) {
         Ok(infos) => infos,
-        Err(_) => Vec::new(),
+        Err(e) => {
+            println!("{e}");
+            return;
+        }
     };
 
     let dir_infos = match handle_dir(&dirs, &flags) {
         Ok(infos) => infos,
-        Err(_) => Vec::new(),
+        Err(e) => {
+            println!("{e}");
+            return;
+        }
     };
 
     display(files_infos, dir_infos, flags);

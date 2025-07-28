@@ -1,5 +1,5 @@
 use std::{
-    fs::{symlink_metadata},
+    fs::symlink_metadata,
     os::unix::fs::{FileTypeExt, MetadataExt},
     path::Path,
 };
@@ -82,7 +82,13 @@ pub fn colored_output(file: &String, dir_name: Option<&str>, flags: &Flags) -> S
     }
 
     let full_path = match dir_name {
-        Some(dir) => Path::new(dir).join(file).to_string_lossy().to_string(),
+        Some(dir) => {
+            if file == "." {
+                ".".to_string()
+            } else {
+                Path::new(dir).join(file).to_string_lossy().to_string()
+            }
+        }
         None => file.clone(),
     };
 

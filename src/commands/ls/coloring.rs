@@ -1,5 +1,5 @@
 use std::{
-    fs::symlink_metadata,
+    fs::{symlink_metadata},
     os::unix::fs::{FileTypeExt, MetadataExt},
     path::Path,
 };
@@ -72,38 +72,19 @@ pub fn color_socket(file_name: &String, color: Color, flags: &Flags) -> String {
 }
 
 pub fn colored_output(file: &String, dir_name: Option<&str>, flags: &Flags) -> String {
-    // dbg!(file);
     if file.contains(" -> ") {
         let parts: Vec<&str> = file.split("->").collect();
-        if parts.len() == 2 {
-            let symlink_name = parts[0].to_string();
-            let target_path = parts[1];
+        let symlink_name = parts[0].to_string();
+        let target_path = parts[1];
 
-            let colored_name = color_symlink(&symlink_name, Color::Skybleu, flags);
-            return format!("{}->{}", colored_name, target_path);
-        }
+        let colored_name = color_symlink(&symlink_name, Color::Skybleu, flags);
+        return format!("{}->{}", colored_name, target_path);
     }
 
-    // Construct full path for metadata
-    let full_path = if flags.l {
-        match dir_name {
-            Some(dir) => {
-                // dbg!(dir);
-                if file == "." {
-                    ".".to_string()
-                } else if file == ".." {
-                    "..".to_string()
-                } else {
-                    Path::new(dir).join(file).to_string_lossy().to_string()
-                }
-            }
-            None => file.clone(),
-        }
-    } else {
-        file.clone()
+    let full_path = match dir_name {
+        Some(dir) => Path::new(dir).join(file).to_string_lossy().to_string(),
+        None => file.clone(),
     };
-
-    // dbg!(&full_path);
 
     let path = Path::new(&full_path);
 

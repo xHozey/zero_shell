@@ -93,7 +93,7 @@ fn get_date_time(metadata: &Metadata) -> Result<String, String> {
     if date > six_month {
         Ok(date.format("%b %e %H:%M").to_string())
     } else {
-        Ok(date.format("%b %e %Y").to_string())
+        Ok(date.format("%b %e  %Y").to_string())
     }
 }
 

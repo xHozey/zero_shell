@@ -102,7 +102,7 @@ pub fn get_dir_entries(dir_path: &Path, flags: &Flags) -> Result<DirInfo, ()> {
                         };
                         result.push(details);
                     } else {
-                        result.push(vec![entry.path().to_string_lossy().to_string()]);
+                        result.push(vec![file_name.to_string()]);
                     }
                 }
             }

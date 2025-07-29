@@ -2,7 +2,6 @@ use std::io::*;
 use zero_shell::*;
 mod commands;
 use commands::*;
-
 fn main() {
     'outer: loop {
         format_prompt();

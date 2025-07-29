@@ -1,10 +1,15 @@
-use std::io::*;
+use std::{io::*, path::PathBuf};
 use zero_shell::*;
 mod commands;
 use commands::*;
 fn main() {
+    let mut last_env = PathBuf::new();
+
     'outer: loop {
-        format_prompt();
+        let path = format_prompt(&last_env);
+        if path.is_some() {
+            last_env = path.unwrap()
+        }
         if let Err(err) = stdout().flush() {
             eprintln!("{}", err.to_string().to_ascii_lowercase());
             continue;
@@ -20,7 +25,7 @@ fn main() {
         for (cmd, args) in commands {
             match cmd.as_str() {
                 "pwd" => {
-                    pwd();
+                    pwd(&last_env);
                 }
                 "echo" => {
                     echo(args);

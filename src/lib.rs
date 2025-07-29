@@ -1,4 +1,4 @@
-use std::{env, io::*};
+use std::{env, io::*, path::PathBuf};
 
 #[derive(PartialEq)]
 enum State {
@@ -154,12 +154,21 @@ pub fn parse_tokens(args: Vec<Token>) -> Vec<(String, Vec<String>)> {
     res
 }
 
-pub fn format_prompt() {
+pub fn format_prompt(last_path: &PathBuf) -> Option<PathBuf> {
     match env::current_dir() {
-        Ok(path) => match path.file_name() {
-            Some(name) => print!("{} $ ", name.to_str().unwrap()),
-            None => print!("{} $ ", path.display()),
-        },
-        Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase()),
+        Ok(path) => {
+            if path.file_name().is_some() {
+                let name = path.file_name().unwrap().to_str().unwrap_or("");
+                print!("{} $ ", name);
+                return Some(path);
+            }
+
+            None
+        }
+        Err(_) => {
+            let name = last_path.file_name().unwrap().to_str().unwrap_or("");
+            print!("{} $ ", name);
+            None
+        }
     }
 }

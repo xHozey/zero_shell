@@ -9,7 +9,7 @@ pub fn cat(s: Vec<String>) {
             match stdin().read_line(&mut buffer) {
                 Ok(0) => break, 
                 Ok(_) => print!("{}", buffer),
-                Err(err) => eprintln!("cat1: {}", err.to_string().to_ascii_lowercase()),
+                Err(err) => eprintln!("cat: {}", err.to_string().to_ascii_lowercase()),
             }
         }
     } else {
@@ -20,13 +20,13 @@ pub fn cat(s: Vec<String>) {
                         Ok(text) => print!("{}", text),
                         Err(_) => {
                             if let Err(e) = io::stdout().write_all(&content) {
-                                eprintln!("cat2: failed to write bytes: {}", e);
+                                eprintln!("cat: failed to write bytes: {}", e);
                             }
                         }
                     }
                 }
                 Err(err) => {
-                    eprintln!("cat3: {}", err.to_string().to_ascii_lowercase());
+                    eprintln!("cat: {}", err.to_string().to_ascii_lowercase());
                 }
             }
         }

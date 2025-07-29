@@ -1,21 +1,35 @@
 use std::env;
-use std::path::Path;
-pub fn cd(args: Vec<String>) {
-    if args.is_empty() {
-        if let Some(home) = env::var_os("HOME").or_else(|| env::var_os("USERPROFILE")) {
-            if let Err(err) = env::set_current_dir(Path::new(&home)) {
-                eprintln!("cd: {}", err.to_string().to_ascii_lowercase())
+use std::path::PathBuf;
+
+pub fn cd(input: Vec<String>) {
+    let s = input.join(" ");
+    let trimmed = s.trim();
+
+    let target_path = if trimmed.is_empty() || trimmed == "~" {
+        match env::var("HOME") {
+            Ok(home) => PathBuf::from(home),
+            Err(_) => {
+                eprintln!("cd: HOME not set");
+                return;
             }
-        } else {
-            eprintln!("cd: home directory not found")
         }
-        return;
-    }
-    if args.len() > 1 {
-        eprintln!("cd: string not in pwd: {}", args[0]);
-        return;
-    }
-    if let Err(err) = env::set_current_dir(Path::new(&args[0])) {
-        eprintln!("cd: {}", err.to_string().to_ascii_lowercase())
+    } else if trimmed.starts_with("~/") {
+        match env::var("HOME") {
+            Ok(home) => {
+                let mut home_path = PathBuf::from(home);
+                home_path.push(trimmed.trim_start_matches("~/"));
+                home_path
+            }
+            Err(_) => {
+                eprintln!("cd: HOME not set");
+                return;
+            }
+        }
+    } else {
+        PathBuf::from(trimmed)
+    };
+
+    if let Err(err) = env::set_current_dir(&target_path) {
+        eprintln!("cd: {}", err.to_string().to_ascii_lowercase());
     }
 }

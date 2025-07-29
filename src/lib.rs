@@ -12,11 +12,13 @@ pub struct Token {
     kind: TokenKind,
     value: String,
 }
+
 impl Token {
     fn new(kind: TokenKind, value: String) -> Self {
         Self { kind, value }
     }
 }
+
 #[derive(Debug, PartialEq)]
 enum TokenKind {
     Word,

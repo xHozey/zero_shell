@@ -6,7 +6,11 @@ pub fn rm(args: Vec<String>) {
         flag = true
     }
     for file in args {
-        if file == "-r" {
+        if flag && (file == "." || file == "..") {
+            eprintln!("rm: refusing to remove '.' or '..' directory: skipping '{}'", file);
+            continue;
+        }
+        if file == "-r"  {
             continue;
         }
         let f = Path::new(&file);

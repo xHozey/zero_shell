@@ -6,7 +6,8 @@ fn main() {
     'outer: loop {
         format_prompt();
         if let Err(err) = stdout().flush() {
-            eprintln!("{}", err.to_string().to_ascii_lowercase())
+            eprintln!("{}", err.to_string().to_ascii_lowercase());
+            continue;
         }
         let mut buffer = String::new();
         match stdin().read_line(&mut buffer) {
@@ -14,40 +15,43 @@ fn main() {
             Ok(_) => {}
             Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase()),
         }
-        let (cmd, args) = parse_command(buffer.trim());
-        match cmd.as_str() {
-            "pwd" => {
-                pwd();
-            }
-            "echo" => {
-                echo(args);
-            }
-            "cat" => {
-                cat(args);
-            }
-            "cd" => {
-                cd(args);
-            }
-            "ls" => {
-                ls(args);
-            }
-            "cp" => {
-                cp(args);
-            }
-            "mkdir" => {
-                mkdir(args);
-            }
-            "mv" => {
-                mv(args);
-            }
-            "rm" => {
-                rm(args);
-            }
-            "exit" => {
-                break 'outer;
-            }
-            _ => {
-                eprintln!("command '{}' not found", cmd)
+        let commands = parse_tokens(tokenizer(buffer.trim().to_string()));
+
+        for (cmd, args) in commands {
+            match cmd.as_str() {
+                "pwd" => {
+                    pwd();
+                }
+                "echo" => {
+                    echo(args);
+                }
+                "cat" => {
+                    cat(args);
+                }
+                "cd" => {
+                    cd(args);
+                }
+                "ls" => {
+                    ls(args);
+                }
+                "cp" => {
+                    cp(args);
+                }
+                "mkdir" => {
+                    mkdir(args);
+                }
+                "mv" => {
+                    mv(args);
+                }
+                "rm" => {
+                    rm(args);
+                }
+                "exit" => {
+                    break 'outer;
+                }
+                _ => {
+                    eprintln!("command '{}' not found", cmd)
+                }
             }
         }
     }

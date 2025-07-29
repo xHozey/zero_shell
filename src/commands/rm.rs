@@ -1,11 +1,11 @@
 use std::fs;
 use std::path::Path;
-pub fn rm(s: Vec<String>) {
+pub fn rm(args: Vec<String>) {
     let mut flag = false;
-    if s.contains(&String::from("-r")) {
+    if args.contains(&"-r".to_string()) {
         flag = true
     }
-    for file in s {
+    for file in args {
         if file == "-r" {
             continue;
         }

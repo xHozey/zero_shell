@@ -141,7 +141,7 @@ fn coloring_target(target: &str, flags: &Flags, dir_name: Option<&str>) -> Strin
 
     let metadata = match metadata(target_path) {
         Ok(metadata) => metadata,
-        Err(e) => return e.to_string(),
+        Err(_) => return target.to_string(),
     };
 
     let file_name = target.to_string();

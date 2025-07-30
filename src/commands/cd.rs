@@ -37,6 +37,6 @@ pub fn cd(input: Vec<String>) {
     }
 
     if let Err(err) = env::set_current_dir(&target_path) {
-        eprintln!("cd: {}", err.to_string().to_ascii_lowercase());
+        eprintln!("cd: can't{}", err.to_string().to_ascii_lowercase());
     }
 }

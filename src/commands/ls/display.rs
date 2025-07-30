@@ -1,4 +1,9 @@
-use crate::commands::ls::{coloring::*, handlers::DirInfo, parser::Flags, utils::{get_max_width, get_terminal_width}};
+use crate::commands::ls::{
+    coloring::*,
+    handlers::DirInfo,
+    parser::Flags,
+    utils::{get_max_width, get_terminal_width},
+};
 
 pub fn display(files_info: Vec<Vec<String>>, dirs_info: Vec<DirInfo>, flags: Flags) {
     if !files_info.is_empty() {

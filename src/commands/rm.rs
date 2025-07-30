@@ -18,7 +18,9 @@ pub fn rm(args: Vec<String>) {
         if file == "-r"  {
             continue;
         }
+        
         let f = Path::new(&file);
+
         if f.exists() {
             if flag {
                 if f.is_dir() {

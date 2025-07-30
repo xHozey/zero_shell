@@ -4,7 +4,7 @@ mod commands;
 use commands::*;
 fn main() {
     let mut last_env = PathBuf::new();
-
+    // save last path for cd
     'outer: loop {
         let path = format_prompt(&last_env);
         if path.is_some() {

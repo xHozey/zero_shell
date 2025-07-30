@@ -87,7 +87,6 @@ pub fn tokenizer(mut input: String) -> Vec<Token> {
                     }
                 }
                 State::Escape => {
-                    
                     token_buffer.push(c);
                     state = State::Normal;
                 }

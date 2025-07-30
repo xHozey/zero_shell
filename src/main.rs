@@ -11,6 +11,10 @@ fn main() {
             last_env = path.unwrap()
         }
         if let Err(err) = stdout().flush() {
+            if err.kind() == ErrorKind::BrokenPipe {
+                eprintln!("{}", err.to_string().to_ascii_lowercase());
+                break 'outer;
+            }
             eprintln!("{}", err.to_string().to_ascii_lowercase());
             continue;
         }

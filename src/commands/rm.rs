@@ -2,6 +2,10 @@ use std::fs;
 use std::path::Path;
 
 pub fn rm(args: Vec<String>) {
+    if args.is_empty() || (args.len() == 1 && args[0] == "-r") {
+        eprintln!("rm: missing operand");
+        return;
+    }
     let mut flag = false;
     if args.contains(&"-r".to_string()) {
         flag = true

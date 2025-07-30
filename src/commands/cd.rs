@@ -1,5 +1,5 @@
 use std::env;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub fn cd(input: Vec<String>) {
     let s = input.join(" ");
@@ -28,6 +28,13 @@ pub fn cd(input: Vec<String>) {
     } else {
         PathBuf::from(trimmed)
     };
+
+    if let Err(_) = env::current_dir() {
+        if target_path == Path::new("..") {
+            eprintln!("cd: can't cd to {}", target_path.display());
+            return;
+        }
+    }
 
     if let Err(err) = env::set_current_dir(&target_path) {
         eprintln!("cd: {}", err.to_string().to_ascii_lowercase());

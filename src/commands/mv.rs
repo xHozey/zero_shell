@@ -14,10 +14,14 @@ pub fn mv(args: Vec<String>) {
     if args.len() == 2 {
         let src = Path::new(&args[0]);
         let dst = Path::new(&args[1]);
-
-        if let Err(err) = rename(src, &dst) {
-            eprintln!("mv: {}", err);
-            return;
+        if dst.is_dir() {
+            if let Err(err) = rename(src, dst.join(Path::new(&src))) {
+                eprintln!("mv: {}", err.to_string().to_ascii_lowercase())
+            }
+        } else {
+            if let Err(err) = rename(src, &dst) {
+                eprintln!("mv: {}", err);
+            }
         }
 
         return;

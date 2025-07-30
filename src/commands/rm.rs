@@ -1,5 +1,6 @@
 use std::fs;
 use std::path::Path;
+
 pub fn rm(args: Vec<String>) {
     let mut flag = false;
     if args.contains(&"-r".to_string()) {

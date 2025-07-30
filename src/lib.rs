@@ -32,7 +32,7 @@ pub fn tokenizer(mut input: String) -> Vec<Token> {
 
     loop {
         let mut chars = input.chars().peekable();
-        let mut prev_char = None;
+        let mut backslash = false;
 
         while let Some(c) = chars.next() {
             match state {
@@ -56,9 +56,9 @@ pub fn tokenizer(mut input: String) -> Vec<Token> {
                     _ => token_buffer.push(c),
                 },
                 State::DoubleQuote => {
-                    if c == '"' && prev_char != Some('\\') {
+                    if c == '"' && !backslash {
                         state = State::Normal;
-                    } else if prev_char == Some('\\') {
+                    } else if backslash {
                         match c {
                             'n' => token_buffer.push('\n'),
                             't' => token_buffer.push('\t'),
@@ -71,12 +71,12 @@ pub fn tokenizer(mut input: String) -> Vec<Token> {
                                 token_buffer.push(c);
                             }
                         }
-                        prev_char = None;
+                        backslash = false;
                     } else if c == '\\' {
-                        prev_char = Some('\\');
+                        backslash = true;
                     } else {
                         token_buffer.push(c);
-                        prev_char = None;
+                        backslash = false;
                     }
                 }
                 State::SingleQuote => {

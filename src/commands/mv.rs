@@ -15,20 +15,11 @@ pub fn mv(args: Vec<String>) {
         let src = Path::new(&args[0]);
         let dst = Path::new(&args[1]);
 
-        let tmp = dst.with_extension("tmp_swap");
+        if let Err(err) = rename(src, &dst) {
+            eprintln!("mv: {}", err);
+            return;
+        }
 
-        if let Err(err) = rename(dst, &tmp) {
-            eprintln!("mv: {}", err);
-            return;
-        }
-        if let Err(err) = rename(src, dst) {
-            eprintln!("mv: {}", err);
-            return;
-        }
-        if let Err(err) = rename(&tmp, src) {
-            eprintln!("mv: {}", err);
-            return;
-        }
         return;
     }
 

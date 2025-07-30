@@ -1,10 +1,12 @@
-use std::{io::*, path::PathBuf};
+use std::{env, io::*, path::PathBuf};
 use zero_shell::*;
 mod commands;
 use commands::*;
+
 fn main() {
     let mut last_env = PathBuf::new();
-    // save last path for cd
+    let mut last_path = env::current_dir().unwrap_or(PathBuf::new());
+
     'outer: loop {
         let path = format_prompt(&last_env);
         if path.is_some() {
@@ -38,7 +40,7 @@ fn main() {
                     cat(args);
                 }
                 "cd" => {
-                    cd(args);
+                    last_path = cd(args, &last_path);
                 }
                 "ls" => {
                     ls(args);

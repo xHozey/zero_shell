@@ -37,48 +37,51 @@ pub fn tokenizer(mut input: String) -> Vec<Token> {
         while let Some(c) = chars.next() {
             if escape {
                 match c {
-                    'n' => if active_quote.is_some() {
+                    'n' => {
+                        if active_quote.is_some() {
                             token_buffer.push('\n');
                         } else {
-                           
                             token_buffer.push('n');
-                        },
-                    't' => if active_quote.is_some() {
+                        }
+                    }
+                    't' => {
+                        if active_quote.is_some() {
                             token_buffer.push('\t');
                         } else {
-                            
                             token_buffer.push('t');
-                        },
-                    'r' => if active_quote.is_some() {
+                        }
+                    }
+                    'r' => {
+                        if active_quote.is_some() {
                             token_buffer.push('\r');
                         } else {
-                           
                             token_buffer.push('r');
-                        },
-                        '\\' => match chars.peek() {
-                            Some('n') => {
-                                token_buffer.push('\n');
-                                chars.next();
-                            }
-                           
-                            Some('t')  => {
-                                token_buffer.push('\t');
-                                chars.next();
-                            }
-                            Some('r')  => {
-                                token_buffer.push('\r');
-                                chars.next();
-                            }
-                            _ => {
-                                token_buffer.push('\\');
-                            },
-                        },
+                        }
+                    }
+                    '\\' => match chars.peek() {
+                        Some('n') => {
+                            token_buffer.push('\n');
+                            chars.next();
+                        }
+
+                        Some('t') => {
+                            token_buffer.push('\t');
+                            chars.next();
+                        }
+                        Some('r') => {
+                            token_buffer.push('\r');
+                            chars.next();
+                        }
+                        _ => {
+                            token_buffer.push('\\');
+                        }
+                    },
                     '\'' => token_buffer.push('\''),
                     '"' => token_buffer.push('"'),
                     _ => {
                         token_buffer.push('\\');
                         token_buffer.push(c);
-                    },
+                    }
                 }
                 escape = false;
                 continue;
@@ -161,7 +164,11 @@ pub fn parse_tokens(args: Vec<Token>) -> Vec<(String, Vec<String>)> {
     for token in args {
         match token.kind {
             TokenKind::Word => {
-                current_cmd.push(token.value);
+                if token.value == "~" {
+                    current_cmd.push(env::var("HOME").unwrap_or("~".to_string()));
+                } else {
+                    current_cmd.push(token.value);
+                }
             }
             TokenKind::Operator => {
                 if token.value == ";" {

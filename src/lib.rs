@@ -1,12 +1,12 @@
 use std::{env, io::*, path::PathBuf};
 
 #[derive(PartialEq)]
-enum State {
-    Normal,
-    SingleQuote,
-    DoubleQuote,
-    Escape,
-}
+// enum State {
+//     Normal,
+//     SingleQuote,
+//     DoubleQuote,
+//     Escape,
+// }
 #[derive(Debug)]
 pub struct Token {
     kind: TokenKind,
@@ -28,73 +28,104 @@ enum TokenKind {
 pub fn tokenizer(mut input: String) -> Vec<Token> {
     let mut tokens = Vec::new();
     let mut token_buffer = String::new();
-    let mut state = State::Normal;
+    let mut active_quote: Option<char> = None;
+    let mut escape = false;
 
     loop {
         let mut chars = input.chars().peekable();
-        let mut backslash = false;
 
         while let Some(c) = chars.next() {
-            match state {
-                State::Normal => match c {
-                    '"' => state = State::DoubleQuote,
-                    '\'' => state = State::SingleQuote,
-                    '\\' => state = State::Escape,
-                    ';' => {
+            if escape {
+                match c {
+                    'n' => if active_quote.is_some() {
+                            token_buffer.push('\n');
+                        } else {
+                           
+                            token_buffer.push('n');
+                        },
+                    't' => if active_quote.is_some() {
+                            token_buffer.push('\t');
+                        } else {
+                            
+                            token_buffer.push('t');
+                        },
+                    'r' => if active_quote.is_some() {
+                            token_buffer.push('\r');
+                        } else {
+                           
+                            token_buffer.push('r');
+                        },
+                        '\\' => match chars.peek() {
+                            Some('n') => {
+                                token_buffer.push('\n');
+                                chars.next();
+                            }
+                           
+                            Some('t')  => {
+                                token_buffer.push('\t');
+                                chars.next();
+                            }
+                            Some('r')  => {
+                                token_buffer.push('\r');
+                                chars.next();
+                            }
+                            _ => {
+                                token_buffer.push('\\');
+                            },
+                        },
+                    '\'' => token_buffer.push('\''),
+                    '"' => token_buffer.push('"'),
+                    _ => {
+                        token_buffer.push('\\');
+                        token_buffer.push(c);
+                    },
+                }
+                escape = false;
+                continue;
+            }
+
+            match c {
+                '\\' => {
+                    escape = true;
+                }
+                c if c.is_whitespace() => {
+                    if active_quote.is_some() {
+                        token_buffer.push(c);
+                    } else if !token_buffer.is_empty() {
+                        tokens.push(Token::new(TokenKind::Word, token_buffer.clone()));
+                        token_buffer.clear();
+                    }
+                }
+                '\'' | '"' => {
+                    if let Some(q) = active_quote {
+                        if q == c {
+                            active_quote = None;
+                        } else {
+                            token_buffer.push(c);
+                        }
+                    } else {
+                        active_quote = Some(c);
+                    }
+                }
+                ';' => {
+                    if active_quote.is_some() {
+                        token_buffer.push(c);
+                    } else {
                         if !token_buffer.is_empty() {
                             tokens.push(Token::new(TokenKind::Word, token_buffer.clone()));
                             token_buffer.clear();
                         }
                         tokens.push(Token::new(TokenKind::Operator, ";".to_string()));
                     }
-                    c if c.is_whitespace() => {
-                        if !token_buffer.is_empty() {
-                            tokens.push(Token::new(TokenKind::Word, token_buffer.clone()));
-                            token_buffer.clear();
-                        }
-                    }
-                    _ => token_buffer.push(c),
-                },
-                State::DoubleQuote => {
-                    if c == '"' && !backslash {
-                        state = State::Normal;
-                    } else if backslash {
-                        match c {
-                            'n' => token_buffer.push('\n'),
-                            't' => token_buffer.push('\t'),
-                            'r' => token_buffer.push('\r'),
-                            '\\' => token_buffer.push('\\'),
-                            '"' => token_buffer.push('"'),
-                            '\'' => token_buffer.push('\''),
-                            _ => {
-                                token_buffer.push('\\');
-                                token_buffer.push(c);
-                            }
-                        }
-                        backslash = false;
-                    } else if c == '\\' {
-                        backslash = true;
-                    } else {
-                        token_buffer.push(c);
-                        backslash = false;
-                    }
                 }
-                State::SingleQuote => {
-                    if c == '\'' {
-                        state = State::Normal;
-                    } else {
-                        token_buffer.push(c);
-                    }
-                }
-                State::Escape => {
+                _ => {
                     token_buffer.push(c);
-                    state = State::Normal;
                 }
             }
         }
 
-        if state == State::DoubleQuote || state == State::SingleQuote {
-            if state == State::DoubleQuote {
+        if active_quote.is_some() {
+            if Some('"') == active_quote {
                 print!("dquote> ");
             } else {
                 print!("quote> ");

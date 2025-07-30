@@ -57,7 +57,7 @@ fn main() {
                 Vec::new()
             },
         };
-        println!("{:?}",args);
+        print!("{:?}",args);
         // let mut commands = parse_command(&args);
         //     match commands.0.as_str() {
         //         "pwd" => {

@@ -10,14 +10,14 @@ pub fn rm(args: Vec<String>) {
     if args.contains(&"-r".to_string()) {
         flag = true
     }
-    
+
     for file in args {
         if file == "-r" {
             continue;
         }
 
         let f = Path::new(&file);
-        if flag && (f == Path::new(".") || f == Path::new("..")) {
+        if flag && (f == Path::new(".") || f.ends_with(Path::new(".."))) {
             eprintln!(
                 "rm: refusing to remove '.' or '..' directory: skipping '{}'",
                 file

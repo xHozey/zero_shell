@@ -68,7 +68,7 @@ fn display_normal_format(infos: &Vec<Vec<String>>, dir_name: Option<&str>, flags
     }
 
     let terminal_width = get_terminal_width();
-    let max_width = get_max_width(infos)[0] + 2;
+    let max_width = get_max_width(infos)[0];
     let cols_nbr = (terminal_width / max_width).max(1);
     let rows_nbr = ((infos.len() as f64) / (cols_nbr as f64)).ceil() as usize;
 
@@ -80,20 +80,20 @@ fn display_normal_format(infos: &Vec<Vec<String>>, dir_name: Option<&str>, flags
         }
     }
 
-    let col_widths: Vec<usize> = columns.iter().map(|col| {
-        col.iter().map(|entry| entry[0].len()).max().unwrap_or(0) + 1
-    }).collect();
+    let col_widths: Vec<usize> = columns
+        .iter()
+        .map(|col| col.iter().map(|entry| entry[0].len()).max().unwrap_or(0) + 1)
+        .collect();
 
     for row in 0..rows_nbr {
         for (col_idx, col) in columns.iter().enumerate() {
             if let Some(info) = col.get(row) {
                 let file_name = &info[0];
                 let colored_name = colored_output(file_name, dir_name, flags);
-                let padding = col_widths[col_idx] - file_name.len();
+                let padding = (col_widths[col_idx] - file_name.len()) + 1;
                 print!("{}{}", colored_name, " ".repeat(padding));
             }
         }
         println!();
     }
 }
-

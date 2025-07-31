@@ -10,14 +10,14 @@ pub fn ls(args: Vec<String>) {
     };
 
     if let Err(e) = parse_ls_args(args, &mut files, &mut dirs, &mut flags) {
-        println!("{}", e);
+        eprintln!("{}", e);
         return;
     };
 
     let files_infos = match handle_files(&mut files, &flags) {
         Ok(infos) => infos,
         Err(e) => {
-            println!("{e}");
+            eprintln!("{e}");
             return;
         }
     };
@@ -25,7 +25,7 @@ pub fn ls(args: Vec<String>) {
     let dir_infos = match handle_dir(&dirs, &flags) {
         Ok(infos) => infos,
         Err(e) => {
-            println!("{e}");
+            eprintln!("{e}");
             return;
         }
     };

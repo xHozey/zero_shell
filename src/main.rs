@@ -12,6 +12,7 @@ fn main() {
         if path.is_some() {
             last_env = path.unwrap()
         }
+
         if let Err(err) = stdout().flush() {
             if err.kind() == ErrorKind::BrokenPipe {
                 eprintln!("{}", err.to_string().to_ascii_lowercase());
@@ -20,14 +21,15 @@ fn main() {
             eprintln!("{}", err.to_string().to_ascii_lowercase());
             continue;
         }
+
         let mut buffer = String::new();
         match stdin().read_line(&mut buffer) {
             Ok(0) => break 'outer,
             Ok(_) => {}
             Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase()),
         }
-        let commands = parse_tokens(tokenizer(buffer.trim().to_string()));
 
+        let commands = parse_tokens(tokenizer(buffer.trim().to_string()));
         for (cmd, args) in commands {
             match cmd.as_str() {
                 "pwd" => {

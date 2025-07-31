@@ -6,6 +6,7 @@ pub fn mv(args: Vec<String>) {
         eprintln!("mv: missing file operand");
         return;
     }
+    
     if args.len() == 1 {
         eprintln!("mv: missing destination file operand after '{}'", args[0]);
         return;

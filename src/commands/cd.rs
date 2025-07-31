@@ -2,7 +2,6 @@ use std::env;
 use std::path::{Path, PathBuf};
 
 pub fn cd(input: Vec<String>, last_path: &PathBuf) -> PathBuf {
-    
     if input.len() > 1 {
         eprintln!("cd: too many arguments");
         return last_path.clone();
@@ -38,15 +37,19 @@ pub fn cd(input: Vec<String>, last_path: &PathBuf) -> PathBuf {
         PathBuf::from(trimmed)
     };
 
-    if let Err(_) = env::current_dir() {
-        if target_path == Path::new("..") {
+    let mut current_path = PathBuf::new();
+    if let Ok(path) = env::current_dir() {
+        current_path = path
+    } else {
+        if target_path == current_path.parent().unwrap_or(Path::new("..")) {
             eprintln!("cd: can't cd to {}", target_path.display());
             return last_path.clone();
         }
     }
-    let current_path = env::current_dir().unwrap();
+
     if let Err(err) = env::set_current_dir(&target_path) {
         eprintln!("cd: {}", err.to_string().to_ascii_lowercase());
     }
+    
     return current_path;
 }

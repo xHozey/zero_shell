@@ -1,12 +1,5 @@
 use std::{env, io::*, path::PathBuf};
 
-#[derive(PartialEq)]
-// enum State {
-//     Normal,
-//     SingleQuote,
-//     DoubleQuote,
-//     Escape,
-// }
 #[derive(Debug)]
 pub struct Token {
     kind: TokenKind,
@@ -164,11 +157,11 @@ pub fn parse_tokens(args: Vec<Token>) -> Vec<(String, Vec<String>)> {
     for token in args {
         match token.kind {
             TokenKind::Word => {
-                if token.value == "~" {
-                    current_cmd.push(env::var("HOME").unwrap_or("~".to_string()));
-                } else {
-                    current_cmd.push(token.value);
-                }
+                current_cmd.push(
+                    token
+                        .value
+                        .replace("~", &env::var("HOME").unwrap_or("~".to_string())),
+                );
             }
             TokenKind::Operator => {
                 if token.value == ";" {

@@ -72,7 +72,6 @@ pub fn tokenizer(mut input: String) -> Vec<Token> {
                     '\'' => token_buffer.push('\''),
                     '"' => token_buffer.push('"'),
                     _ => {
-                        token_buffer.push('\\');
                         token_buffer.push(c);
                     }
                 }

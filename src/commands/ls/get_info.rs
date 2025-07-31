@@ -43,6 +43,7 @@ pub fn get_detailed_info(path: &Path) -> Result<Vec<String>, String> {
 
 fn get_permissions(metadata: &Metadata, path: &Path) -> String {
     let mode_str = format!("{:?}", metadata.permissions());
+    dbg!(&mode_str);
     let splited_mode: Vec<&str> = mode_str.split(" ").collect();
     let mut permission = splited_mode[4].to_string()[1..splited_mode[4].len() - 1].to_string();
     if has_acl(path) {

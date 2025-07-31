@@ -68,26 +68,32 @@ fn display_normal_format(infos: &Vec<Vec<String>>, dir_name: Option<&str>, flags
     }
 
     let terminal_width = get_terminal_width();
-    let max_width = get_max_width(infos)[0];
-    let cols_nbr = terminal_width / max_width;
+    let max_width = get_max_width(infos)[0] + 2;
+    let cols_nbr = (terminal_width / max_width).max(1);
     let rows_nbr = ((infos.len() as f64) / (cols_nbr as f64)).ceil() as usize;
 
+    let mut columns: Vec<Vec<&Vec<String>>> = vec![vec![]; cols_nbr];
+    for (i, info) in infos.iter().enumerate() {
+        let col = i / rows_nbr;
+        if col < cols_nbr {
+            columns[col].push(info);
+        }
+    }
+
+    let col_widths: Vec<usize> = columns.iter().map(|col| {
+        col.iter().map(|entry| entry[0].len()).max().unwrap_or(0) + 1
+    }).collect();
+
     for row in 0..rows_nbr {
-        for col in 0..cols_nbr {
-            let idx = col * rows_nbr + row;
-
-            if idx < infos.len() {
-                let file_name = &infos[idx][0];
+        for (col_idx, col) in columns.iter().enumerate() {
+            if let Some(info) = col.get(row) {
+                let file_name = &info[0];
                 let colored_name = colored_output(file_name, dir_name, flags);
-
-                print!("{}", colored_name);
-
-                if col < cols_nbr - 1 && idx + rows_nbr < infos.len() {
-                    let padding = max_width - file_name.len() + 1;
-                    print!("{}", " ".repeat(padding));
-                }
+                let padding = col_widths[col_idx] - file_name.len();
+                print!("{}{}", colored_name, " ".repeat(padding));
             }
         }
         println!();
     }
 }
+

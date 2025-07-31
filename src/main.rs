@@ -26,7 +26,10 @@ fn main() {
         match stdin().read_line(&mut buffer) {
             Ok(0) => break 'outer,
             Ok(_) => {}
-            Err(err) => eprintln!("{}", err.to_string().to_ascii_lowercase()),
+            Err(err) => {
+                eprintln!("{}", err.to_string().to_ascii_lowercase());
+                continue;
+            }
         }
 
         let commands = parse_tokens(tokenizer(buffer.trim().to_string()));

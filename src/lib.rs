@@ -1,4 +1,4 @@
-use std::{env, io::*, path::PathBuf};
+use std::{env, ffi::OsStr, io::*, path::PathBuf};
 
 #[derive(Debug)]
 pub struct Token {
@@ -189,7 +189,11 @@ pub fn format_prompt(last_path: &PathBuf) -> Option<PathBuf> {
     match env::current_dir() {
         Ok(path) => {
             if path.file_name().is_some() {
-                let name = path.file_name().unwrap().to_str().unwrap_or("");
+                let name = path
+                    .file_name()
+                    .unwrap_or(OsStr::new(""))
+                    .to_str()
+                    .unwrap_or("");
                 print!("{} $ ", name);
                 return Some(path);
             }
@@ -197,7 +201,11 @@ pub fn format_prompt(last_path: &PathBuf) -> Option<PathBuf> {
             None
         }
         Err(_) => {
-            let name = last_path.file_name().unwrap().to_str().unwrap_or("");
+            let name = last_path
+                .file_name()
+                .unwrap_or(OsStr::new(""))
+                .to_str()
+                .unwrap_or("");
             print!("{} $ ", name);
             None
         }

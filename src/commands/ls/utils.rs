@@ -71,7 +71,9 @@ pub fn add_quotes(file_name: String) -> String {
 }
 
 fn clean_colored_name(name: &String) -> String {
-    let re = Regex::new(r"\u{1b}\[[0-9;]*m").unwrap();
-
-    re.replace_all(name, "").to_string()
+    let regex_result = Regex::new(r"\u{1b}\[[0-9;]*m");
+    if regex_result.is_ok() {
+        return regex_result.unwrap().replace_all(name, "").to_string();
+    }
+    name.to_string()
 }

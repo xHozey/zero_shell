@@ -1,5 +1,5 @@
+use regex::Regex;
 use std::path::{Path, PathBuf};
-
 use terminal_size::{terminal_size, Width};
 
 pub fn cleaner(s: String) -> String {
@@ -38,4 +38,40 @@ pub fn get_max_width(infos: &Vec<Vec<String>>) -> Vec<usize> {
         cols_width.push(max_width);
     }
     cols_width
+}
+
+pub fn contain_special_char(name: &String) -> bool {
+    let special_char = [
+        '!', '$', '^', '&', '*', '(', ')', '[', ']', '|', '\\', ';', '"', '`', '<', '>', '?', '=',
+    ];
+
+    let clean_name = clean_colored_name(name);
+
+    if clean_name.contains(' ') {
+        return true;
+    }
+
+    for char in clean_name.chars() {
+        if special_char.contains(&char) {
+            return true;
+        }
+    }
+
+    false
+}
+
+pub fn add_quotes(file_name: String) -> String {
+    if file_name.contains("'") {
+        format!("\"{}\"", file_name)
+    } else if contain_special_char(&file_name) {
+        format!("'{}'", file_name)
+    } else {
+        file_name
+    }
+}
+
+fn clean_colored_name(name: &String) -> String {
+    let re = Regex::new(r"\u{1b}\[[0-9;]*m").unwrap();
+
+    re.replace_all(name, "").to_string()
 }

@@ -6,7 +6,7 @@ use std::{
 
 use colored::Colorize;
 
-use crate::commands::ls::parser::Flags;
+use crate::commands::ls::{parser::Flags, utils::add_quotes};
 pub enum Color {
     Brown,
     Blue,
@@ -111,7 +111,7 @@ pub fn colored_output(file: &String, dir_name: Option<&str>, flags: &Flags) -> S
     let file_type = metadata.file_type();
     let mode = metadata.mode();
 
-    if file_type.is_dir() {
+    let colored_name = if file_type.is_dir() {
         color_dir(&file_name, Color::Blue, flags)
     } else if file_type.is_fifo() {
         color_pipe(&file_name, Color::Brown, flags)
@@ -127,7 +127,8 @@ pub fn colored_output(file: &String, dir_name: Option<&str>, flags: &Flags) -> S
         } else {
             file_name
         }
-    }
+    };
+    add_quotes(colored_name)
 }
 
 fn coloring_target(target: &str, flags: &Flags, dir_name: Option<&str>) -> String {

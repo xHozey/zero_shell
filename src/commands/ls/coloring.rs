@@ -103,32 +103,33 @@ pub fn colored_output(file: &String, dir_name: Option<&str>, flags: &Flags) -> S
         None => file.clone(),
     };
 
+    let quoted_name = add_quotes(file_name);
+    
     let metadata = match symlink_metadata(path) {
         Ok(metadata) => metadata,
-        Err(_) => return file_name,
+        Err(_) => return quoted_name,
     };
 
     let file_type = metadata.file_type();
     let mode = metadata.mode();
 
-    let colored_name = if file_type.is_dir() {
-        color_dir(&file_name, Color::Blue, flags)
+    if file_type.is_dir() {
+        color_dir(&quoted_name, Color::Blue, flags)
     } else if file_type.is_fifo() {
-        color_pipe(&file_name, Color::Brown, flags)
+        color_pipe(&quoted_name, Color::Brown, flags)
     } else if file_type.is_block_device() || file_type.is_char_device() {
-        color_devices(&file_name, Color::Brown)
+        color_devices(&quoted_name, Color::Brown)
     } else if file_type.is_socket() {
-        color_socket(&file_name, Color::Red, flags)
+        color_socket(&quoted_name, Color::Red, flags)
     } else if file_type.is_symlink() {
-        color_symlink(&file_name, Color::Skybleu, flags)
+        color_symlink(&quoted_name, Color::Skybleu, flags)
     } else {
         if mode & 0o111 != 0 {
-            color_exec_file(&file_name, Color::Green, flags)
+            color_exec_file(&quoted_name, Color::Green, flags)
         } else {
-            file_name
+            quoted_name
         }
-    };
-    add_quotes(colored_name)
+    }
 }
 
 fn coloring_target(target: &str, flags: &Flags, dir_name: Option<&str>) -> String {
